@@ -1,12 +1,12 @@
 
 
-body{
+body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-   background-color: antiquewhite; 
-   
+    background-color: antiquewhite;
 }
 
 .homepage{
@@ -154,4 +154,12 @@ p{
 
 #phone{
     width: 60%;
+}
+
+#companyname {
+    text-align: center;
+    margin-bottom:80px; 
+   
+    font-size: 5.5em; 
+    color: #5C4033;
 }
