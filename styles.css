@@ -3,10 +3,10 @@
 body {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    justify-content: space-between; 
+    min-height: 100vh;  
     background-color: antiquewhite;
+    margin: 0; 
 }
 
 .homepage{
@@ -162,4 +162,37 @@ p{
    
     font-size: 5.5em; 
     color: #5C4033;
+}
+
+.footer {
+    background-color: #5C4033;
+    color: white;          
+    padding: 35px;       
+    text-align: center;      
+    position: relative;     
+    width: 100%;    
+    margin-top: auto;       
+    display: flex;          
+    justify-content: center; 
+    align-items: center;       
+  }
+
+  .footer-content {
+    display: flex;         
+    justify-content: center; 
+    align-items: center;
+}
+
+.footer-content a {
+    font-weight: 600;
+    font-size: 1.5em; 
+    color: #ffffff;
+    text-decoration: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: block;        
+    padding: 10px 20px;   
+}
+
+.footer-content a:hover{
+    text-decoration: underline;
 }
