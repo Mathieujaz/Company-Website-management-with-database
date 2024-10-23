@@ -10,27 +10,31 @@
 <body>
 <h1 id="companyname">Company name</h1>
 <div class="homepage">
-    <form action="ClientMainPage.html" method="get"> 
+    <form id="loginForm">
     <h1>Login</h1>
+
     <div class="input-text">
         <input type="text" id="username" name="username" placeholder="Username" required> 
         </div>
+
         <div class="input-text">
         <input type="password" id="password" placeholder="Password" required>
-    </div>
-    <input type="submit" value="Login" id="login">
+       </div>
+       <button type="button" onclick="loginUser()">Login</button>
+
+    <!--<input type="submit" value="Login" id="login">-->
+     <!--<a href = "clientdash.html"></a>-->
 
     <div class="register">
         <p>Don't have an account? <a href="./Register.html"> Register here!</a></p>
     </div>
+
     <div class="business">
         <p>Business administrator? <a href ="./BusinessHomePage.html">Click here!</a> </p>
     </div>
     </form>
     
 </div>
-
+<script src="scripts.js"></script> <!-- Link to external JavaScript file -->
 </body>
-
-
 </html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>Main Page</title>
+ 
+</head>
+
+<body>
+
+    <h1 class = "dash">Client Dashboard</h1>
+
+
+    <div class="section" id="account-management">
+        <h2>Account Management</h2>
+        <li><button onclick="window.location.href='EditAccount.html'">Edit Account</button></li>
+        <li><button onclick="deleteAccount()">Delete Account</button></li>
+        <li><button onclick="signOut()">Sign Out</button></li>
+    </div>
+
+
+
+    <div class="section" id="billing">
+          <h2>Billing</h2>
+          <button>View Bills and Receipts</button>
+    </div>
+
+
+    <div class="section" id="services">
+        <h2>Services</h2>
+        <li> <button onclick="window.location.href='offeredServices.html'">Offered Services</button></li>
+        <li><button>Overview of Past and Future Services</button></li>
+        <li><button>Request Specific Services</button></li>
+        <li><button>Cancel a Service</button></li>
+  </div>
+  <script src="scripts.js"></script> 
+</body>
+</html>
