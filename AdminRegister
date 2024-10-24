@@ -38,7 +38,7 @@
                 <input type="adress" id="adminaddress" placeholder="Address" required>
             </div>
             <br>
-            <input type="submit" value="Create account" id="login">
+            <input type="submit" value="Create account" id="Adminlogin">
 
             <div class="register">
                 <a href="./HomePage.html">Return to login page</a>
