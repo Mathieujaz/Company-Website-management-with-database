@@ -30,7 +30,7 @@ function registerUser() {
     localStorage.setItem('clients', JSON.stringify(clients));
 
     // Redirect to login page after registration
-    window.location.href = './proj.html';
+    window.location.href = './HomePage.html';
 }
 
 // Function to login a user
@@ -46,7 +46,7 @@ function loginUser() {
     if (foundUser) {
         // Redirect to the client dashboard
         localStorage.setItem('currentUser', JSON.stringify(foundUser));
-        window.location.href = './clientdash.html';
+        window.location.href = './ClientDash.html';
     } else {
         alert('Invalid username or password.');
     }
@@ -89,7 +89,7 @@ function submitChanges() {
 
         // Notify the user and redirect to the dashboard
         alert('Account updated successfully!');
-        window.location.href = './clientdash.html';
+        window.location.href = './ClientDash.html';
     
 }
 }
