@@ -156,25 +156,85 @@ const services = [
     { id: 8, name: "Green Cleaning", description: "Eco-friendly cleaning services that use sustainable products." },
 ];
 
-// Function to display offered services
+// Function to display the offered services dynamically
 function displayOfferedServices() {
-    const servicesContainer = document.getElementById('services-list');
-    if (!servicesContainer) return; // Check if the element exists
+    const servicesList = document.getElementById('servicesList');
+ 
+    servicesList.innerHTML = ''; // Clear any existing content
 
-    servicesContainer.innerHTML = ''; // Clear existing content
-
+    // Loop through the services array and create HTML elements for each service
     services.forEach(service => {
-        const serviceInfo = `${service.name}: ${service.description}`;
-        const serviceItem = document.createElement('div');
-        serviceItem.classList.add('service-item');
-        serviceItem.textContent = serviceInfo;
+        console.log(`Creating service for: ${service.name}`); // Debugging message
 
-        servicesContainer.appendChild(serviceItem);
+        const serviceDiv = document.createElement('div');
+        serviceDiv.classList.add('service-item');
+
+        const serviceName = document.createElement('h3');
+        serviceName.textContent = service.name; // Set service name
+
+        const serviceDescription = document.createElement('p');
+        serviceDescription.textContent = service.description; // Set service description
+
+        const scheduleButton = document.createElement('button');
+        scheduleButton.textContent = `Select ${service.name}`; // Button label
+        scheduleButton.onclick = () => selectService(service.name); // Attach click event to button
+
+        // Append name, description, and button to the service div
+        serviceDiv.appendChild(serviceName);
+        serviceDiv.appendChild(serviceDescription);
+        serviceDiv.appendChild(scheduleButton);
+
+        // Append the service div to the servicesList div
+        servicesList.appendChild(serviceDiv);
+    });
+}
+
+// Function to handle service selection
+function selectService(serviceName) {
+    console.log(`Service selected: ${serviceName}`);
+    document.getElementById('selectedService').textContent = `You selected: ${serviceName}`; // Display the selected service
+    document.getElementById('scheduleSection').style.display = 'block'; // Show the schedule section
+}
+
+function confirmScheduling(){
+    const selectedService = localStorage.getItem('selectedService');
+    const selectedDate = document.getElementById('scheduleDate').value
+    alert(`${selectedService} successfully scheduled on ${selectedDate}!`);
+
+    // Store the scheduled service in local storage
+    const scheduledServices = JSON.parse(localStorage.getItem('scheduledServices')) || [];
+    scheduledServices.push({ serviceName: selectedService, date: selectedDate });
+    localStorage.setItem('scheduledServices', JSON.stringify(scheduledServices));
+
+    // Reset the scheduling form
+    document.getElementById('scheduleSection').style.display = 'none';
+    document.getElementById('scheduleDate').value = ''; 
+}
+function displayScheduledServices() {
+    const scheduledServices = JSON.parse(localStorage.getItem('scheduledServices')) || [];
+    const serviceOverview = document.getElementById('serviceOverview');
+
+    if (scheduledServices.length === 0) {
+        serviceOverview.textContent = "No services scheduled.";
+        return;
+    }
+
+    serviceOverview.innerHTML = ''; // Clear any existing content
+
+    scheduledServices.forEach((scheduledService) => {
+        const serviceItem = document.createElement('div');
+        serviceItem.textContent = `${scheduledService.serviceName} on ${scheduledService.date}`;
+        serviceOverview.appendChild(serviceItem);
     });
 }
 
 
-// Call the function when the page loads
-window.onload = function() {
-   displayOfferedServices(); // Call function only on the offered services page
-    }
+// Ensure the services are displayed after the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM loaded, running displayOfferedServices...");
+    displayOfferedServices();
+});
+
+
+
+
