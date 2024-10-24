@@ -1,180 +1,41 @@
-//FOR LOGIN AND SIGN IN + CREATING ARRAY
-
-// Array to hold all clients
-let clients = JSON.parse(localStorage.getItem('clients')) || [];
-
-// Function to register a new user
 function registerUser() {
+    const name = document.getElementById('name').value;
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
     const phone = document.getElementById('phone').value;
-    const address = document.getElementById('address').value;
-    
+    const email = document.getElementById('email').value;
+    const address = document.getElementById('adress').value;
 
-    // Create a new client object
-    let newClient = {
+    // Create a user object
+    const user = {
+        name: name,
         username: username,
         password: password,
-        name: name,
-        email: email,
         phone: phone,
+        email: email,
         address: address
     };
 
-    // Add the new client to the clients array
-    clients.push(newClient);
+    // Save user object in local storage
+    localStorage.setItem(username, JSON.stringify(user));
 
-    // Save the updated array in local storage
-    localStorage.setItem('clients', JSON.stringify(clients));
-
-    // Redirect to login page after registration
-    window.location.href = '.HomePage.html';
+    // Optionally redirect to the login page
+    window.location.href = './HomePage.html'; // Redirect to homepage or login page
 }
 
-// Function to login a user
 function loginUser() {
-    const enteredUsername = document.getElementById('username').value;
-    const enteredPassword = document.getElementById('password').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-    let clients = JSON.parse(localStorage.getItem('clients')) || [];
-    // Find the user in the clients array
-    let foundUser = clients.find(client => 
-        client.username === enteredUsername && client.password === enteredPassword);
-    
-    if (foundUser) {
-        // Redirect to the client dashboard
-        localStorage.setItem('currentUser', JSON.stringify(foundUser));
-        window.location.href = './ClientDash.html';
+    // Retrieve user data from local storage
+    const user = JSON.parse(localStorage.getItem(username));
+
+    // Check if user exists and password matches
+    if (user && user.password === password) {
+        alert("Login successful!");
+        // Redirect to client dashboard or home page
+        window.location.href = './clientdash.html'; 
     } else {
-        alert('Invalid username or password.');
+        alert("Invalid username or password.");
     }
 }
-
-
-// to edit account (client)
-function submitChanges() {
-    const updatedName = document.getElementById('name').value;
-    const updatedUsername = document.getElementById('username').value;
-    const updatedEmail = document.getElementById('email').value;
-    const updatedPhone = document.getElementById('phone').value;
-    const updatedAddress = document.getElementById('address').value;
-
-    // Get the currently logged-in user (could be stored during login)
-    const currentUser = JSON.parse(localStorage.getItem('currentUser')); // Assuming you store the logged-in user here
-
-    // Get all clients from localStorage
-    let clients = JSON.parse(localStorage.getItem('clients')) || [];
-
-    // Find the current client in the array
-    let clientIndex = clients.findIndex(client => client.username === currentUser.username);
-
-    if (clientIndex !== -1) {
-        // Update the found client object with the new data
-        clients[clientIndex] = {
-            username: updatedUsername,
-            password: clients[clientIndex].password, // Keep the same password
-            name: updatedName,
-            email: updatedEmail,
-            phone: updatedPhone,
-            address: updatedAddress
-        };
-
-        // Save the updated clients array back to localStorage
-        localStorage.setItem('clients', JSON.stringify(clients));
-
-        // Also update the currently logged-in user data
-        localStorage.setItem('currentUser', JSON.stringify(clients[clientIndex]));
-
-        // Notify the user and redirect to the dashboard
-        alert('Account updated successfully!');
-        window.location.href = './ClientDash.html';
-    
-}
-}
-
-
-//sign out 
-function signOut() {
-    // Clear user data from localStorage (or session data if you had that)
-    localStorage.removeItem('user');
-
-    // Redirect to the main page after signing out
-    window.location.href = 'mainpage.html';
-}
-
-//delete account 
-function deleteAccount() {
-    // Get the currently logged-in user
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    if (currentUser) {
-        // Ask for user confirmation
-        const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');
-
-        if (confirmation) {
-            // Get all clients from localStorage
-            let clients = JSON.parse(localStorage.getItem('clients')) || [];
-
-            // Find the index of the current user in the clients array
-            let clientIndex = clients.findIndex(client => client.username === currentUser.username);
-
-            if (clientIndex !== -1) {
-                // Remove the client from the array
-                clients.splice(clientIndex, 1);
-
-                // Save the updated clients array back to localStorage
-                localStorage.setItem('clients', JSON.stringify(clients));
-
-                // Clear the current user data
-                localStorage.removeItem('currentUser');
-
-                // Notify the user
-                alert('Your account has been deleted successfully.');
-
-                // Redirect to the main page or login page
-                window.location.href = 'mainpage.html';
-            } else {
-                alert('Account not found.');
-            }
-        }
-    } else {
-        alert('No user is currently logged in.');
-    }
-}
-
-// Array to hold all offered services
-const services = [
-    { id: 1, name: "Residential Cleaning", description: "Thorough cleaning of your home, including dusting, vacuuming, and sanitizing surfaces." },
-    { id: 2, name: "Commercial Cleaning", description: "Professional cleaning services for offices and businesses to maintain a clean work environment." },
-    { id: 3, name: "Deep Cleaning", description: "Intensive cleaning that covers all areas, including those often overlooked." },
-    { id: 4, name: "Move-In/Move-Out Cleaning", description: "Cleaning services tailored for moving, ensuring spaces are spotless." },
-    { id: 5, name: "Carpet Cleaning", description: "Deep cleaning of carpets using specialized equipment and solutions." },
-    { id: 6, name: "Window Cleaning", description: "Professional cleaning of windows, both inside and out." },
-    { id: 7, name: "Post-Construction Cleaning", description: "Cleaning services to remove debris and dust after construction work." },
-    { id: 8, name: "Green Cleaning", description: "Eco-friendly cleaning services that use sustainable products." },
-];
-
-// Function to display offered services
-function displayOfferedServices() {
-    const servicesContainer = document.getElementById('services-list');
-    if (!servicesContainer) return; // Check if the element exists
-
-    servicesContainer.innerHTML = ''; // Clear existing content
-
-    services.forEach(service => {
-        const serviceInfo = `${service.name}: ${service.description}`;
-        const serviceItem = document.createElement('div');
-        serviceItem.classList.add('service-item');
-        serviceItem.textContent = serviceInfo;
-
-        servicesContainer.appendChild(serviceItem);
-    });
-}
-
-
-// Call the function when the page loads
-window.onload = function() {
-   displayOfferedServices(); // Call function only on the offered services page
-    }
