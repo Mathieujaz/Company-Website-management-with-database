@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Admin Registering Page</title>
+</head>
+
+<body>
+    <h1 id="companyname">Company name</h1>
+<div class="adminregisterpage">
+    <div class="homepage">
+        <form>
+            <h1>Create an admin account</h1>
+            <div class="input-text">
+                <label for="name">Enter your full name:</label>
+                <input type="text" id="adminname" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-text">
+                <label for="username">Enter your username:</label>
+                <input type="text" id="adminusername" name="username" placeholder="Username" required> 
+            </div>
+            <div class="input-text">
+                <label for="password">Enter your password:</label>
+                <input type="password" id="adminpassword" placeholder="Password" required>
+            </div>
+            <div class="input-text">
+                <label for="phone">Enter your phone number:</label>
+                <input type="phone" id="adminphone" placeholder="Phone Number" required>
+            </div>
+            <div class="input-text">
+                <label for="email">Enter your email:</label>
+                <input type="email" id="adminpassword" placeholder="Email" required>
+            </div>
+            <div class="input-text">
+                <label for="adress">Enter your address:</label>
+                <input type="adress" id="adminaddress" placeholder="Address" required>
+            </div>
+            <br>
+            <input type="submit" value="Create account" id="login">
+
+            <div class="register">
+                <a href="./HomePage.html">Return to login page</a>
+            </div>
+        </form>
+        
+    </div>
+</div>
+
+
+<script src="scripts.js"></script> 
+</body>
+</html>
