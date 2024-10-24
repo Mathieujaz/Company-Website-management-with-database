@@ -11,7 +11,7 @@
     <h1 id="companyname">Company name</h1>
 <div class="registerpage">
     <div class="homepage">
-        <form action="HomePage.html" method="get"> 
+        <form onsubmit="registerUser(); return false;"> 
             <h1>Create an account</h1>
             <div class="input-text">
                 <label for="name">Enter your full name:</label>
@@ -44,7 +44,11 @@
                 <a href="./HomePage.html">Return to login page</a>
             </div>
         </form>
+        
     </div>
 </div>
+
+
+<script src="scripts.js"></script> 
 </body>
 </html>
