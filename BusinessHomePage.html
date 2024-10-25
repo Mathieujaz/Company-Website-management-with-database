@@ -4,37 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <title>Administrator 2 login page</title>
+    <title>Administrator Login Page</title>
 </head>
-
 <body>
     <h1 id="companyname">Company name</h1>
-<div class="businesshomepage">
-<div class="homepage">
-   <!-- <form action="AdminMainPage.html" method="get"> -->
-    <h1> Administrator Login</h1>
-    <div class="input-text">
-        <input type="text" id="username" name="username" placeholder="Username" required> 
+
+    <div class="businesshomepage">
+        <div class="homepage">
+            <h1>Administrator Login</h1>
+            <form id="loginForm">
+                <div class="input-text">
+                    <input type="text" id="username" name="username" placeholder="Username" required>
+                </div>
+                <div class="input-text">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <input type="submit" value="Login" id="login">
+
+                <div class="register">
+                    <p>Don't have an account? <a href="./AdminRegister.html">Register here!</a></p>
+                </div>
+
+                <div class="business">
+                    <p>Are you a client? <a href="./HomePage.html">Click here!</a></p>
+                </div>
+
+                <div class="goback">
+                    <p><a href="./mainpage.html">Return to dashboard</a></p>
+                </div>
+            </form>
         </div>
-        <div class="input-text">
-        <input type="password" id="password" placeholder="Password" required>
     </div>
-    <input type="submit" value="Login" id="login">
 
-    
-    <div class="business">
-        <p>Are you a client? <a href="./HomePage.html">Click here!</a> </p>
-    </div>
-    <div class="goback">
-        <p><a href="./mainpage.html">Return to dashboard</a></p>
-    </div>
-    </form>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const storedAccount = JSON.parse(localStorage.getItem('businessAccount'));
+            const enteredUsername = document.getElementById('username').value;
+            const enteredPassword = document.getElementById('password').value;
 
-    
-</div>
-</div>
-
+            if (storedAccount && storedAccount.username === enteredUsername && storedAccount.password === enteredPassword) {
+                window.location.href = 'BusinessHomePage.html';
+            } else {
+                alert('Invalid username or password');
+            }
+        });
+    </script>
 </body>
-
-
 </html>

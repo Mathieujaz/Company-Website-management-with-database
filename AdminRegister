@@ -5,50 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <title>Admin Registering Page</title>
+
+    <style>
+        .AdminRegister .registerpage .homepage {
+            height: 750px;
+            background-color: #d6a184;
+        }
+
+        #createAccount {
+            width: 100%;
+            height: 45px;
+            background-color: #5C4033;
+            border-radius: 40px;
+            color: #ffffff;
+            font-size: 1.1em; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 500;
+        }
+
+        #createAccount:hover {
+            color: #010101;
+            background-color: #ffffff;
+        }
+    </style>
 </head>
 
 <body>
     <h1 id="companyname">Company name</h1>
-<div class="adminregisterpage">
-    <div class="homepage">
-        <form>
-            <h1>Create an admin account</h1>
-            <div class="input-text">
-                <label for="name">Enter your full name:</label>
-                <input type="text" id="adminname" name="name" placeholder="Full Name" required>
-            </div>
-            <div class="input-text">
-                <label for="username">Enter your username:</label>
-                <input type="text" id="adminusername" name="username" placeholder="Username" required> 
-            </div>
-            <div class="input-text">
-                <label for="password">Enter your password:</label>
-                <input type="password" id="adminpassword" placeholder="Password" required>
-            </div>
-            <div class="input-text">
-                <label for="phone">Enter your phone number:</label>
-                <input type="phone" id="adminphone" placeholder="Phone Number" required>
-            </div>
-            <div class="input-text">
-                <label for="email">Enter your email:</label>
-                <input type="email" id="adminpassword" placeholder="Email" required>
-            </div>
-            <div class="input-text">
-                <label for="adress">Enter your address:</label>
-                <input type="adress" id="adminaddress" placeholder="Address" required>
-            </div>
-            <br>
-            <input type="submit" value="Create account" id="Adminlogin">
 
-            <div class="register">
-                <a href="./HomePage.html">Return to login page</a>
+    <div class="AdminRegister">
+        <div class="registerpage">
+            <div class="homepage">
+                <form id="registerForm">
+                    <h1>Create an admin account</h1>
+                    <div class="input-text">
+                        <label for="name">Enter your full name:</label>
+                        <input type="text" id="adminname" name="name" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-text">
+                        <label for="username">Enter your username:</label>
+                        <input type="text" id="adminusername" name="username" placeholder="Username" required> 
+                    </div>
+                    <div class="input-text">
+                        <label for="password">Enter your password:</label>
+                        <input type="password" id="adminpassword" placeholder="Password" required>
+                    </div>
+                    <div class="input-text">
+                        <label for="phone">Enter your phone number:</label>
+                        <input type="tel" id="adminphone" placeholder="Phone Number" required>
+                    </div>
+                    <div class="input-text">
+                        <label for="email">Enter your email:</label>
+                        <input type="email" id="adminemail" placeholder="Email" required>
+                    </div>
+                    <div class="input-text">
+                        <label for="address">Enter your address:</label>
+                        <input type="text" id="adminaddress" placeholder="Address" required>
+                    </div>
+                    <br>
+                    <input type="submit" value="Create admin account" id="createAccount">
+
+                    <div class="register">
+                        <a href="./BusinessHomePage.html">Return to login page</a>
+                    </div>
+                </form>
             </div>
-        </form>
-        
+        </div>
     </div>
-</div>
 
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('adminname').value;
+            const username = document.getElementById('adminusername').value;
+            const password = document.getElementById('adminpassword').value;
+            const phone = document.getElementById('adminphone').value;
+            const email = document.getElementById('adminemail').value;
+            const address = document.getElementById('adminaddress').value;
 
-<script src="scripts.js"></script> 
+            const account = {
+                name: name,
+                username: username,
+                password: password,
+                phone: phone,
+                email: email,
+                address: address
+            };
+
+            localStorage.setItem('businessAccount', JSON.stringify(account));
+            window.location.href = 'BusinessHomePage.html';
+        });
+    </script>
 </body>
 </html>
