@@ -3,23 +3,106 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="AdminDash.css" />
+    <link rel="stylesheet" href="styles.css" />
     <title>Business Profile Management</title>
+
+    <style>
+      * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+
+body {
+    background-color: antiquewhite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+.profile-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+
+h1 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+
+.box {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.box label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.box input, .box textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #555;
+}
+
+.box textarea {
+    height: 100px;
+    resize: none;
+}
+
+
+.button {
+    margin-top: 20px;
+}
+
+.save {
+    width: 100%;
+    padding: 10px;
+    background-color: #5cb85c;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    color: white;
+    cursor: pointer;
+}
+
+.save:hover {
+    background-color: #4cae4c;
+}
+
+    </style>
   </head>
   <body>
-    <!-- Container for the entire profile management form -->
+    
     <div class="profile-container">
       <h1>Business Profile Management</h1>
 
-      <!-- Profile Form starts here -->
+      
       <form
         action="saveBusinessProfile.html"
         method="post"
         id="businessProfileForm"
         enctype="multipart/form-data"
       >
-        <!-- Business Name -->
-        <div class="input-box">
+      
+        <div class="box">
           <label for="business-name">Business Name</label>
           <input
             type="text"
@@ -30,8 +113,8 @@
           />
         </div>
 
-        <!-- Business Logo Upload -->
-        <div class="input-box">
+       
+        <div class="box">
           <label for="business-logo">Business Logo</label>
           <input
             type="file"
@@ -42,8 +125,8 @@
           />
         </div>
 
-        <!-- Business Address -->
-        <div class="input-box">
+     
+        <div class="box">
           <label for="business-address">Business Address</label>
           <textarea
             id="business-address"
@@ -53,8 +136,8 @@
           ></textarea>
         </div>
 
-        <!-- Business Contact -->
-        <div class="input-box">
+       
+        <div class="box">
           <label for="business-contact">Business Contact Number</label>
           <input
             type="text"
@@ -65,11 +148,14 @@
           />
         </div>
 
-        <!-- Submit Button -->
-        <div class="button-box">
-          <input type="submit" value="Save Changes" class="save-button" />
+        
+        <div class="button">
+          <input type="submit" value="Save Changes" class="save" />
         </div>
       </form>
     </div>
+    
   </body>
+
+
 </html>
