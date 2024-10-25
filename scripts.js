@@ -144,126 +144,6 @@ function deleteAccount() {
     }
 }
 
-/*
-// Array to hold all offered services
-const services = [
-    { id: 1, name: "Residential Cleaning", description: "Thorough cleaning of your home, including dusting, vacuuming, and sanitizing surfaces." },
-    { id: 2, name: "Commercial Cleaning", description: "Professional cleaning services for offices and businesses to maintain a clean work environment." },
-    { id: 3, name: "Deep Cleaning", description: "Intensive cleaning that covers all areas, including those often overlooked." },
-    { id: 4, name: "Move-In/Move-Out Cleaning", description: "Cleaning services tailored for moving, ensuring spaces are spotless." },
-    { id: 5, name: "Carpet Cleaning", description: "Deep cleaning of carpets using specialized equipment and solutions." },
-    { id: 6, name: "Window Cleaning", description: "Professional cleaning of windows, both inside and out." },
-    { id: 7, name: "Post-Construction Cleaning", description: "Cleaning services to remove debris and dust after construction work." },
-    { id: 8, name: "Green Cleaning", description: "Eco-friendly cleaning services that use sustainable products." },
-];
-
-// Function to display offered services
-function displayOfferedServices() {
-    const servicesContainer = document.getElementById('services-list');
-    if (!servicesContainer) return; // Check if the element exists
-
-    servicesContainer.innerHTML = ''; // Clear existing content
-
-    services.forEach(service => {
-        const serviceInfo = `${service.name}: ${service.description}`;
-        const serviceItem = document.createElement('div');
-        serviceItem.classList.add('service-item');
-        serviceItem.textContent = serviceInfo;
-
-        servicesContainer.appendChild(serviceItem);
-    });
-}
-
-
-// Call the function when the page loads
-window.onload = function() {
-   displayOfferedServices(); // Call function only on the offered services page
-    }
-*/
-// Array of offered services (this can be extended or modified easily)
-/*const services = [
-    { id: 1, name: "Residential Cleaning", description: "Thorough cleaning of your home, including dusting, vacuuming, and sanitizing surfaces." },
-    { id: 2, name: "Commercial Cleaning", description: "Professional cleaning services for offices and businesses to maintain a clean work environment." },
-    { id: 3, name: "Deep Cleaning", description: "Intensive cleaning that covers all areas, including those often overlooked." },
-    { id: 4, name: "Move-In/Move-Out Cleaning", description: "Cleaning services tailored for moving, ensuring spaces are spotless." },
-    { id: 5, name: "Carpet Cleaning", description: "Deep cleaning of carpets using specialized equipment and solutions." },
-    { id: 6, name: "Window Cleaning", description: "Professional cleaning of windows, both inside and out." },
-    { id: 7, name: "Post-Construction Cleaning", description: "Cleaning services to remove debris and dust after construction work." },
-    { id: 8, name: "Green Cleaning", description: "Eco-friendly cleaning services that use sustainable products." }
-];
-
-// Function to display the offered services
-function displayOfferedServices() {
-    const servicesList = document.getElementById('servicesList');
-    servicesList.innerHTML = ''; // Clear the list before populating it
-
-    // Loop through the services array
-    services.forEach(service => {
-        // Create a div to hold each service's details
-        const serviceDiv = document.createElement('div');
-        serviceDiv.classList.add('service-item');
-
-        // Create a heading for the service name
-        const serviceName = document.createElement('h3');
-        serviceName.textContent = service.name;
-
-        // Create a paragraph for the service description
-        const serviceDescription = document.createElement('p');
-        serviceDescription.textContent = service.description;
-
-        // Create a button to schedule the service
-        const scheduleButton = document.createElement('button');
-        scheduleButton.textContent = 'Schedule';
-        scheduleButton.onclick = () => selectService(service.name); // Pass service name to selectService
-
-        // Append name, description, and button to the service div
-        serviceDiv.appendChild(serviceName);
-        serviceDiv.appendChild(serviceDescription);
-        serviceDiv.appendChild(scheduleButton);
-
-        // Append the service div to the servicesList div
-        servicesList.appendChild(serviceDiv);
-    });
-}
-
-// Function to handle service selection for scheduling
-let selectedServiceName = null;
-
-function selectService(serviceName) {
-    // Save the selected service name
-    selectedServiceName = serviceName;
-
-    // Show the scheduling section and display the selected service name
-    document.getElementById('selectedService').textContent = `You selected: ${serviceName}`;
-    document.getElementById('scheduleSection').style.display = 'block';
-}
-
-// Function to confirm scheduling of a service
-function scheduleService() {
-    const scheduleDate = document.getElementById('scheduleDate').value;
-    
-    if (!scheduleDate) {
-        alert('Please select a date to schedule the service.');
-        return;
-    }
-
-    // Display confirmation message (this can be replaced with any further logic you want to add)
-    alert(`Service "${selectedServiceName}" has been scheduled for ${scheduleDate}.`);
-
-    // Reset the scheduling section
-    document.getElementById('scheduleSection').style.display = 'none';
-    document.getElementById('scheduleDate').value = '';
-}
-
-// Call this function to display the services when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    displayOfferedServices();
-
-    // Add event listener for the confirm schedule button
-    document.getElementById('confirmSchedule').addEventListener('click', scheduleService);
-});
-*/
-// Array of offered services
 
 // Array of offered services (static, hardcoded in the frontend)
 const services = [
@@ -313,38 +193,21 @@ function selectService(serviceName) {
 }
 
 function confirmScheduling(){
-    const selectedService = localStorage.getItem('selectedService');
+    const selectedService= document.getElementById('selectedService').textContent.replace('You selected: ', '');  // Extract the selected service
+    //const selectedService = localStorage.getItem('selectedService');
     const selectedDate = document.getElementById('scheduleDate').value
-    alert(`${selectedService} successfully scheduled on ${selectedDate}!`);
+    //alert(`${selectedService} successfully scheduled on ${selectedDate}!`);
 
     // Store the scheduled service in local storage
     const scheduledServices = JSON.parse(localStorage.getItem('scheduledServices')) || [];
     scheduledServices.push({ serviceName: selectedService, date: selectedDate });
     localStorage.setItem('scheduledServices', JSON.stringify(scheduledServices));
 
+    alert(`${selectedService} successfully scheduled on ${selectedDate}!`);
     // Reset the scheduling form
     document.getElementById('scheduleSection').style.display = 'none';
     document.getElementById('scheduleDate').value = ''; 
 }
-function displayScheduledServices() {
-    const scheduledServices = JSON.parse(localStorage.getItem('scheduledServices')) || [];
-    const serviceOverview = document.getElementById('serviceOverview');
-
-    if (scheduledServices.length === 0) {
-        serviceOverview.textContent = "No services scheduled.";
-        return;
-    }
-
-    serviceOverview.innerHTML = ''; // Clear any existing content
-
-    scheduledServices.forEach((scheduledService) => {
-        const serviceItem = document.createElement('div');
-        serviceItem.textContent = `${scheduledService.serviceName} on ${scheduledService.date}`;
-        serviceOverview.appendChild(serviceItem);
-    });
-}
-
-
 // Ensure the services are displayed after the page loads
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM loaded, running displayOfferedServices...");
@@ -352,5 +215,61 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+// Function to display the scheduled services (future and past)
+function displayScheduledServices() {
+    const scheduledServices = JSON.parse(localStorage.getItem('scheduledServices')) || [];
+    const futureServicesDiv = document.getElementById('futureServices');
+    const pastServicesDiv = document.getElementById('pastServices');
+
+    // Get the current date
+    const currentDate = new Date();
+
+    // Clear existing content
+    futureServicesDiv.innerHTML = '';
+    pastServicesDiv.innerHTML = '';
+
+    if (scheduledServices.length === 0) {
+        futureServicesDiv.textContent = "No services scheduled.";
+        pastServicesDiv.textContent = "No services scheduled.";
+        return;
+    }
+
+    // Loop through the scheduled services and separate past and future
+    scheduledServices.forEach(service => {
+        if (service.serviceName && service.date) {
+        const serviceDate = new Date(service.date);
+        const serviceItem = document.createElement('div');
+        serviceItem.textContent = `${service.serviceName} on ${service.date}`;
+
+        if (serviceDate >= currentDate) {
+            // Future service
+            futureServicesDiv.appendChild(serviceItem);
+        } else {
+            // Past service
+            pastServicesDiv.appendChild(serviceItem);
+        }
+ } })
+;
+
+    // If no future services
+    if (!futureServicesDiv.hasChildNodes()) {
+        futureServicesDiv.textContent = "No future services scheduled.";
+    }
+
+    // If no past services
+    if (!pastServicesDiv.hasChildNodes()) {
+        pastServicesDiv.textContent = "No past services scheduled.";
+    }
+}
+
+// Redirect the user to the overview page
+function redirectToOverview() {
+    window.location.href = './OverviewServices.html';
+}
+
+// Ensure the services are displayed after the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    displayScheduledServices(); // Call function on the overview page
+});
 
 
