@@ -131,17 +131,17 @@ p{
           />
         </div>
 
-       
         <div class="box">
           <label for="business-logo">Business Logo</label>
           <input
-            type="file"
-            id="business-logo"
-            name="business-logo"
-            accept="image/*"
-            
+              type="file"
+              id="business-logo"
+              name="business-logo"
+              accept="image/*"
+              onchange="changeLogo(event)"
           />
-        </div>
+          <img id="logoImage" src="" alt="Current Logo" style="width:100px; height:auto; margin-top:10px;" />
+      </div>
 
      
         <div class="box">
@@ -175,24 +175,51 @@ p{
       </form>
     </div>
     
-    
-<script>
- 
-  document.getElementById('businessProfileForm').addEventListener('submit', function (e) {
-    e.preventDefault(); 
-
-
-    const businessName = document.getElementById('business-name').value;
-
-    
-    localStorage.setItem('businessName', businessName);
-
-    alert('Business name updated successfully!');
-
-    window.location.href = 'AdminDash.html';
-  });
-</script>
-
+    <script>
+      document.getElementById('businessProfileForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+  
+          const businessName = document.getElementById('business-name').value;
+          localStorage.setItem('businessName', businessName);
+  
+          alert('Business name updated successfully!');
+          
+          // Redirect to the dashboard after updating the name
+          window.location.href = 'AdminDash.html';
+      });
+  
+      function changeLogo(event) {
+          const file = event.target.files[0];
+          const reader = new FileReader();
+  
+          reader.onload = function(e) {
+              localStorage.setItem('logoSrc', e.target.result); // Save logo source to localStorage
+              setLogo(); // Set the logo immediately after upload
+          };
+  
+          if (file) {
+              reader.readAsDataURL(file);
+          }
+      }
+  
+      // This function sets the logo when the page loads
+      function setLogo() {
+          const savedLogoSrc = localStorage.getItem('logoSrc');
+          if (savedLogoSrc) {
+              const logoImage = document.getElementById('logoImage');
+              logoImage.src = savedLogoSrc; // Update logo source
+          }
+      }
+  
+      window.onload = function() {
+          setLogo(); // Call setLogo on page load
+          // Also set the business name field on page load
+          const savedBusinessName = localStorage.getItem('businessName');
+          if (savedBusinessName) {
+              document.getElementById('business-name').value = savedBusinessName; // Set saved business name in the input
+          }
+      };
+  </script>
     <script src="scripts.js"></script> 
   </body>
 

@@ -13,7 +13,9 @@
 </head>
 
 <header class="mainpageheader">
-  <h2 class = "logo">LOGO</h2>
+  <h2 class="logo">
+    <img id="logoImage" src="default_logo.png" alt=" Logo" style="width:100px; height:auto;" />
+</h2>
    <nav class = "navigation">
         <a href="#"> Home</a>
         <a href="#"> Services</a>
@@ -49,6 +51,17 @@
       document.getElementById('companyname').textContent = storedBusinessName;
     }
   });
+
+    function setLogo() {
+        const savedLogoSrc = localStorage.getItem('logoSrc');
+        if (savedLogoSrc) {
+            const logoImage = document.getElementById('logoImage');
+            logoImage.src = savedLogoSrc; 
+        }
+    }
+
+    window.onload = setLogo; 
+
 </script>
 
 <script src="scripts.js"></script> 
