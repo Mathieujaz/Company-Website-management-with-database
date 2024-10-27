@@ -231,17 +231,24 @@ p{
 }
 
 .navigation .loginbutton {
-    width: 100px;
-    height: 30px;
-    border: 4px solid white;
     color: #5C4033;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor:pointer;
     font-size: 1.3em;
     margin-left: 50px;
     font-weight: 600;
     background: transparent;
     text-decoration: none;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: 3px solid #5C4033;
+    background-color: white;
+    padding-bottom: 15px;
+}
+
+.navigation .loginbutton:hover{
+    background: #d7cfcc;
 }
 
 

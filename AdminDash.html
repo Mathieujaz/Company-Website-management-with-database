@@ -70,15 +70,32 @@
         #service-button:hover {
             background-color: rgb(13, 159, 188);
         }
+
+    #signOutButton {
+        position: absolute;
+        top: 20px;
+        right: 70px;
+        background-color: #81726d;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #signOutButton:hover {
+        background-color: red;
+    }
+
 </style>
 
-    </style>
 </head>
 
 <body>
 
     <header class="header">
         <h1 class="dash">Admin Dashboard</h1>
+        <button id="signOutButton" onclick="signOut()">Sign Out</button>
     </header>
 
     <div class="homepagedash">
@@ -102,6 +119,16 @@
         </div>
     </div>
 
+
+    <script>
+        function signOut() {
+          
+            localStorage.removeItem('businessAccount');
+          
+            window.location.href = 'AdminLogin.html';
+        }
+    </script>
+    
     <script src="scripts.js"></script>
 </body>
 
