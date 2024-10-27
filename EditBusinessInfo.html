@@ -101,7 +101,7 @@ p{
     }
 
     a:hover{
-        color:gray;
+        color: rgb(113, 121, 113);
         text-decoration: underline;
     }
 
@@ -175,6 +175,25 @@ p{
       </form>
     </div>
     
+    
+<script>
+ 
+  document.getElementById('businessProfileForm').addEventListener('submit', function (e) {
+    e.preventDefault(); 
+
+
+    const businessName = document.getElementById('business-name').value;
+
+    
+    localStorage.setItem('businessName', businessName);
+
+    alert('Business name updated successfully!');
+
+    window.location.href = 'AdminDash.html';
+  });
+</script>
+
+    <script src="scripts.js"></script> 
   </body>
 
 

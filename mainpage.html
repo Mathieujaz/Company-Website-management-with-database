@@ -38,4 +38,18 @@
        
         
   </body>
+
+
+  <!-- Add this script inside the <head> or just before the closing </body> tag on Main Page -->
+<script>
+  // Retrieve the business name from localStorage and display it
+  document.addEventListener('DOMContentLoaded', function () {
+    const storedBusinessName = localStorage.getItem('businessName');
+    if (storedBusinessName) {
+      document.getElementById('companyname').textContent = storedBusinessName;
+    }
+  });
+</script>
+
+<script src="scripts.js"></script> 
 </html>

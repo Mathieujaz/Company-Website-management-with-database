@@ -53,7 +53,16 @@
                 alert('Invalid username or password');
             }
         });
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const companyName = localStorage.getItem('businessName') || 'Company name'; // Default if not set
+        document.getElementById('companyname').textContent = companyName;
+    });
+
+
     </script>
-    
+     <script src="scripts.js"></script>
 </body>
 </html>
