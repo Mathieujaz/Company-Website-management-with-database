@@ -76,13 +76,23 @@
     <script>
         document.getElementById('registerForm').addEventListener('submit', function(event) {
             event.preventDefault();
+    
+            
+            const existingAccount = localStorage.getItem('businessAccount');
+            if (existingAccount) {
+                alert('An administrator account already exists.');
+                return; 
+            }
+    
+            
             const name = document.getElementById('adminname').value;
             const username = document.getElementById('adminusername').value;
             const password = document.getElementById('adminpassword').value;
             const phone = document.getElementById('adminphone').value;
             const email = document.getElementById('adminemail').value;
             const address = document.getElementById('adminaddress').value;
-
+    
+           
             const account = {
                 name: name,
                 username: username,
@@ -91,10 +101,14 @@
                 email: email,
                 address: address
             };
-
+    
+            
             localStorage.setItem('businessAccount', JSON.stringify(account));
+    
+           
             window.location.href = 'BusinessHomePage.html';
         });
     </script>
+    
 </body>
 </html>
