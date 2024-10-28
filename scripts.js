@@ -144,132 +144,128 @@ function deleteAccount() {
     }
 }
 
-
-// Array of offered services (static, hardcoded in the frontend)
-const services = [
-    { id: 1, name: "Residential Cleaning", description: "Thorough cleaning of your home, including dusting, vacuuming, and sanitizing surfaces." },
-    { id: 2, name: "Commercial Cleaning", description: "Professional cleaning services for offices and businesses to maintain a clean work environment." }
-   
+// Array of available services (generic and adaptable for any business type)
+const availableServices = [
+    { name: "Service A", description: "Description for Service A" },
+    { name: "Service B", description: "Description for Service B" }
 ];
 
-// Function to display the offered services dynamically
-function displayOfferedServices() {
-    const servicesList = document.getElementById('servicesList');
- 
-    servicesList.innerHTML = ''; // Clear any existing content
+// Load booked services from localStorage, or initialize as an empty array if none exist
+let bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
 
-    // Loop through the services array and create HTML elements for each service
-    services.forEach(service => {
-        console.log(`Creating service for: ${service.name}`); // Debugging message
+// Function to display available services dynamically
+function displayAvailableServices() {
+    const availableServicesDiv = document.getElementById('availableServices');
+    availableServicesDiv.innerHTML = ''; // Clear any existing content
 
+    availableServices.forEach(service => {
         const serviceDiv = document.createElement('div');
-        serviceDiv.classList.add('service-item');
-
-        const serviceName = document.createElement('h3');
-        serviceName.textContent = service.name; // Set service name
-
-        const serviceDescription = document.createElement('p');
-        serviceDescription.textContent = service.description; // Set service description
-
-        const scheduleButton = document.createElement('button');
-        scheduleButton.textContent = `Select ${service.name}`; // Button label
-        scheduleButton.onclick = () => selectService(service.name); // Attach click event to button
-
-        // Append name, description, and button to the service div
-        serviceDiv.appendChild(serviceName);
-        serviceDiv.appendChild(serviceDescription);
-        serviceDiv.appendChild(scheduleButton);
-
-        // Append the service div to the servicesList div
-        servicesList.appendChild(serviceDiv);
+        serviceDiv.innerHTML = `
+            <p>${service.name}: ${service.description}</p>
+            <button onclick="bookService('${service.name}')">Book Now</button>
+        `;
+        availableServicesDiv.appendChild(serviceDiv);
     });
 }
 
-// Function to handle service selection
-function selectService(serviceName) {
-    console.log(`Service selected: ${serviceName}`);
-    document.getElementById('selectedService').textContent = `You selected: ${serviceName}`; // Display the selected service
-    document.getElementById('scheduleSection').style.display = 'block'; // Show the schedule section
+// Function to book a service
+function bookService(serviceName) {
+    const bookingDate = prompt("Enter a date for booking (YYYY-MM-DD):");
+
+    if (bookingDate) {
+        const service = { name: serviceName, date: bookingDate };
+        bookedServices.push(service);
+
+        // Save the updated booked services list in localStorage
+        localStorage.setItem('bookedServices', JSON.stringify(bookedServices));
+
+        displayBookedServices();
+        alert(`${serviceName} booked on ${bookingDate}`);
+    }
 }
 
-function confirmScheduling(){
-    const selectedService= document.getElementById('selectedService').textContent.replace('You selected: ', '');  // Extract the selected service
-    //const selectedService = localStorage.getItem('selectedService');
-    const selectedDate = document.getElementById('scheduleDate').value
-    //alert(`${selectedService} successfully scheduled on ${selectedDate}!`);
+// Function to display booked services on the Offered Services page
+function displayBookedServices() {
+    const bookedServicesList = document.getElementById('bookedServicesList');
+    bookedServicesList.innerHTML = '';
 
-    // Store the scheduled service in local storage
-    const scheduledServices = JSON.parse(localStorage.getItem('scheduledServices')) || [];
-    scheduledServices.push({ serviceName: selectedService, date: selectedDate });
-    localStorage.setItem('scheduledServices', JSON.stringify(scheduledServices));
-
-    alert(`${selectedService} successfully scheduled on ${selectedDate}!`);
-    // Reset the scheduling form
-    document.getElementById('scheduleSection').style.display = 'none';
-    document.getElementById('scheduleDate').value = ''; 
+    if (bookedServices.length === 0) {
+        bookedServicesList.textContent = "No services booked.";
+    } else {
+        bookedServices.forEach(service => {
+            const serviceItem = document.createElement('div');
+            serviceItem.textContent = `${service.name} on ${service.date}`;
+            bookedServicesList.appendChild(serviceItem);
+        });
+    }
 }
-// Ensure the services are displayed after the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM loaded, running displayOfferedServices...");
-    displayOfferedServices();
-});
 
+// Function to display future and past services on the Overview page
+function displayOverview() {
+    // Reload booked services from localStorage to ensure data is up-to-date
+    bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
 
-// Function to display the scheduled services (future and past)
-function displayScheduledServices() {
-    const scheduledServices = JSON.parse(localStorage.getItem('scheduledServices')) || [];
     const futureServicesDiv = document.getElementById('futureServices');
     const pastServicesDiv = document.getElementById('pastServices');
-
-    // Get the current date
-    const currentDate = new Date();
-
-    // Clear existing content
     futureServicesDiv.innerHTML = '';
     pastServicesDiv.innerHTML = '';
 
-    if (scheduledServices.length === 0) {
-        futureServicesDiv.textContent = "No services scheduled.";
-        pastServicesDiv.textContent = "No services scheduled.";
-        return;
-    }
+    const currentDate = new Date();
 
-    // Loop through the scheduled services and separate past and future
-    scheduledServices.forEach(service => {
-        if (service.serviceName && service.date) {
+    bookedServices.forEach(service => {
         const serviceDate = new Date(service.date);
         const serviceItem = document.createElement('div');
-        serviceItem.textContent = `${service.serviceName} on ${service.date}`;
+        serviceItem.textContent = `${service.name} on ${service.date}`;
 
         if (serviceDate >= currentDate) {
-            // Future service
             futureServicesDiv.appendChild(serviceItem);
         } else {
-            // Past service
             pastServicesDiv.appendChild(serviceItem);
         }
- } })
-;
+    });
 
-    // If no future services
     if (!futureServicesDiv.hasChildNodes()) {
-        futureServicesDiv.textContent = "No future services scheduled.";
+        futureServicesDiv.textContent = "No future services booked.";
     }
-
-    // If no past services
     if (!pastServicesDiv.hasChildNodes()) {
-        pastServicesDiv.textContent = "No past services scheduled.";
+        pastServicesDiv.textContent = "No past services available.";
     }
 }
 
-// Redirect the user to the overview page
-function redirectToOverview() {
-    window.location.href = './OverviewServices.html';
+// Function to display and manage cancelable services on the Cancel Service page
+function displayCancelableServices() {
+    const cancelServicesList = document.getElementById('cancelServicesList');
+    cancelServicesList.innerHTML = '';
+
+    if (bookedServices.length === 0) {
+        cancelServicesList.textContent = "No services available to cancel.";
+    } else {
+        bookedServices.forEach((service, index) => {
+            const serviceItem = document.createElement('div');
+            serviceItem.innerHTML = `
+                <p>${service.name} on ${service.date}</p>
+                <button onclick="cancelService(${index})">Cancel Service</button>
+            `;
+            cancelServicesList.appendChild(serviceItem);
+        });
+    }
 }
 
-// Ensure the services are displayed after the page loads
+// Function to cancel a service
+function cancelService(index) {
+    const canceledService = bookedServices.splice(index, 1)[0];
+    alert(`${canceledService.name} on ${canceledService.date} has been canceled.`);
+
+    // Update the localStorage with the modified booked services list
+    localStorage.setItem('bookedServices', JSON.stringify(bookedServices));
+
+    displayCancelableServices();  // Refresh the list after canceling
+}
+
+// Call functions on specific pages based on their elements
 document.addEventListener('DOMContentLoaded', () => {
-    displayScheduledServices(); // Call function on the overview page
+    if (document.getElementById('availableServices')) displayAvailableServices();
+    if (document.getElementById('bookedServicesList')) displayBookedServices();
+    if (document.getElementById('futureServices')) displayOverview();
+    if (document.getElementById('cancelServicesList')) displayCancelableServices();
 });
-
-

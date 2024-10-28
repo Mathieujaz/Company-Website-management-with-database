@@ -5,14 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cancel a Service</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        
+     body {
+    background-color: #D6C0B3;
+    text-align: center;
+    display: flex;        
+    justify-content: center;  
+    align-items: center;     
+    height: 100vh;
+    margin: 0;               
+    padding: 20px; /* Add padding to create space from edges */
+}
+
+    .dash {
+        padding: 30px 80px;
+        background-color: #493628;
+        width: auto;
+        display: inline-block; 
+        margin: 0 auto;
+        color: white;
+        border-radius: 20px;
+        margin-bottom: 30px;
+        }
+
+        .homepageoffered {
+    background-color: #AB886D;
+    color: white;
+    width: 40%;
+    padding: 60px;
+    border-radius: 30px;
+    display: flex;                
+    flex-direction: column;       
+    align-items: center;         
+    justify-content: center;     
+}
+
+        .serviceblock {
+    margin-top: 20px;
+    background-color: #493628;
+    width: 50%;
+    padding: 30px;
+    padding-top: 5px;
+    border-radius: 20px;
+    display: flex;                 
+    flex-direction: column;        
+    align-items: center;           
+    text-align: center;
+}
+.serviceblock h2 {
+    margin: 10px 0;
+}
+
+.serviceblock button {
+    margin: 10px 0; 
+}
+
+#selectdate{
+    margin-bottom: 10px;
+}
+
+#schedule-service{
+    margin-top: 25px;
+}
+    </style>
 </head>
 <body>
-    <h1>Cancel a Booked Service</h1>
+    <h1 class="dash">Offered Services</h1>
 
     <div id="cancelServicesList">
         <!-- List of booked services will be displayed here -->
     </div>
     <p id="noServicesMessage" style="display: none;">No services available to cancel.</p>
+    <div>
+        <a href="ClientDash.html"><button>Back to Client Dashboard</button></a>
+    </div>
 
     <script src="scripts.js"></script>
 </body>
