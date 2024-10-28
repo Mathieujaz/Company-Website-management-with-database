@@ -38,17 +38,31 @@
 
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+            event.preventDefault(); 
+    
+           
             const storedAccount = JSON.parse(localStorage.getItem('businessAccount'));
             const enteredUsername = document.getElementById('username').value;
             const enteredPassword = document.getElementById('password').value;
-
+    
+            
             if (storedAccount && storedAccount.username === enteredUsername && storedAccount.password === enteredPassword) {
-                window.location.href = 'BusinessHomePage.html';
+                
+                window.location.href = 'AdminDash.html';
             } else {
                 alert('Invalid username or password');
             }
         });
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const companyName = localStorage.getItem('businessName') || 'Company name'; // Default if not set
+        document.getElementById('companyname').textContent = companyName;
+    });
+
+
     </script>
+     <script src="scripts.js"></script>
 </body>
 </html>

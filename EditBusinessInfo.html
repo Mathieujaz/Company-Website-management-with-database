@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Business Profile Management</title>
+
+    <style>
+      * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+
+body {
+    background-color: antiquewhite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+.profile-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+
+h1 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+
+.box {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.box label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.box input, .box textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #555;
+}
+
+.box textarea {
+    height: 100px;
+    resize: none;
+}
+
+
+.button {
+    margin-top: 20px;
+}
+
+.save {
+    width: 100%;
+    padding: 10px;
+    background-color: #5cb85c;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    color: white;
+    cursor: pointer;
+}
+
+.save:hover {
+    background-color: #4cae4c;
+}
+
+p{
+        text-align: center;
+        margin-top: 30px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 500;
+        
+    }
+
+    a{
+        color: black;
+        text-decoration: none;
+    }
+
+    a:hover{
+        color: rgb(113, 121, 113);
+        text-decoration: underline;
+    }
+
+    </style>
+  </head>
+  <body>
+    
+    <div class="profile-container">
+      <h1>Business Profile Management</h1>
+
+      
+      <form
+        action="saveBusinessProfile.html"
+        method="post"
+        id="businessProfileForm"
+        enctype="multipart/form-data"
+      >
+      
+        <div class="box">
+          <label for="business-name">Business Name</label>
+          <input
+            type="text"
+            id="business-name"
+            name="business-name"
+            placeholder="Enter your business name"
+            
+          />
+        </div>
+
+        <div class="box">
+          <label for="business-logo">Business Logo</label>
+          <input
+              type="file"
+              id="business-logo"
+              name="business-logo"
+              accept="image/*"
+              onchange="changeLogo(event)"
+          />
+          <img id="logoImage" src="" alt="Current Logo" style="width:100px; height:auto; margin-top:10px;" />
+      </div>
+
+     
+        <div class="box">
+          <label for="business-address">Business Address</label>
+          <textarea
+            id="business-address"
+            name="business-address"
+            placeholder="Enter the business address"
+            
+          ></textarea>
+        </div>
+
+       
+        <div class="box">
+          <label for="business-contact">Business Contact Number</label>
+          <input
+            type="text"
+            id="business-contact"
+            name="business-contact"
+            placeholder="Enter your contact number"
+            
+          />
+        </div>
+
+        
+        <div class="button">
+          <input type="submit" value="Save Changes" class="save" />
+        </div>
+
+        <p><a href="AdminDash.html">Return to Dash Board</a></p>
+      </form>
+    </div>
+    
+    <script>
+      document.getElementById('businessProfileForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+  
+          const businessName = document.getElementById('business-name').value;
+          localStorage.setItem('businessName', businessName);
+  
+          alert('Business name updated successfully!');
+          
+          // Redirect to the dashboard after updating the name
+          window.location.href = 'AdminDash.html';
+      });
+  
+      function changeLogo(event) {
+          const file = event.target.files[0];
+          const reader = new FileReader();
+  
+          reader.onload = function(e) {
+              localStorage.setItem('logoSrc', e.target.result); // Save logo source to localStorage
+              setLogo(); // Set the logo immediately after upload
+          };
+  
+          if (file) {
+              reader.readAsDataURL(file);
+          }
+      }
+  
+      // This function sets the logo when the page loads
+      function setLogo() {
+          const savedLogoSrc = localStorage.getItem('logoSrc');
+          if (savedLogoSrc) {
+              const logoImage = document.getElementById('logoImage');
+              logoImage.src = savedLogoSrc; // Update logo source
+          }
+      }
+  
+      window.onload = function() {
+          setLogo(); // Call setLogo on page load
+          // Also set the business name field on page load
+          const savedBusinessName = localStorage.getItem('businessName');
+          if (savedBusinessName) {
+              document.getElementById('business-name').value = savedBusinessName; // Set saved business name in the input
+          }
+      };
+  </script>
+    <script src="scripts.js"></script> 
+  </body>
+
+
+</html>

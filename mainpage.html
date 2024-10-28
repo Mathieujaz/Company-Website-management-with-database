@@ -4,10 +4,18 @@
    <meta charset="UTF-8">
    <title>Main Page</title>
    <link rel = "stylesheet" href="styles.css">
+
+   <style>
+    h1{
+      text-align: center;
+    }
+   </style>
 </head>
 
 <header class="mainpageheader">
-  <h2 class = "logo">LOGO</h2>
+  <h2 class="logo">
+    <img id="logoImage" src="default_logo.png" alt=" Logo" style="width:100px; height:auto;" />
+</h2>
    <nav class = "navigation">
         <a href="#"> Home</a>
         <a href="#"> Services</a>
@@ -20,6 +28,7 @@
 <body class="mainpagebody">
 
   <section>
+    <h1 id="companyname">Company Name</h1>
     <article>
         <h1 class= "statement">THE NUMBER #1 CLEANING COMPANY IN MONTREAL</h1>
     </article>
@@ -31,4 +40,29 @@
        
         
   </body>
+
+
+  <!-- Add this script inside the <head> or just before the closing </body> tag on Main Page -->
+<script>
+  // Retrieve the business name from localStorage and display it
+  document.addEventListener('DOMContentLoaded', function () {
+    const storedBusinessName = localStorage.getItem('businessName');
+    if (storedBusinessName) {
+      document.getElementById('companyname').textContent = storedBusinessName;
+    }
+  });
+
+    function setLogo() {
+        const savedLogoSrc = localStorage.getItem('logoSrc');
+        if (savedLogoSrc) {
+            const logoImage = document.getElementById('logoImage');
+            logoImage.src = savedLogoSrc; 
+        }
+    }
+
+    window.onload = setLogo; 
+
+</script>
+
+<script src="scripts.js"></script> 
 </html>
