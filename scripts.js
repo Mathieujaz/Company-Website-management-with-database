@@ -179,8 +179,11 @@ function bookService(serviceName) {
         // Save the updated booked services list in localStorage
         localStorage.setItem('bookedServices', JSON.stringify(bookedServices));
 
-        displayBookedServices();
+        //displayBookedServices();
         alert(`${serviceName} booked on ${bookingDate}`);
+        generateBillsFromBookings();
+    
+
     }
 }
 
@@ -258,8 +261,16 @@ function cancelService(index) {
 
     // Update the localStorage with the modified booked services list
     localStorage.setItem('bookedServices', JSON.stringify(bookedServices));
+    let bills = JSON.parse(localStorage.getItem('bills')) || [];
+    bills = bills.filter(bill => !(bill.service === canceledService.name && bill.date === canceledService.date));
 
+    // Save the updated bills in localStorage
+    localStorage.setItem('bills', JSON.stringify(bills));
     displayCancelableServices();  // Refresh the list after canceling
+}
+// Refresh the bills list if on the ViewBills page
+if (document.getElementById('billsList')) {
+    displayBills();
 }
 
 // Call functions on specific pages based on their elements
@@ -268,4 +279,57 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('bookedServicesList')) displayBookedServices();
     if (document.getElementById('futureServices')) displayOverview();
     if (document.getElementById('cancelServicesList')) displayCancelableServices();
+    if (document.getElementById('billsList')) displayBills(); 
+});
+
+
+
+
+
+
+// Array to hold all booked services (initialize from local storage or as an empty array)
+
+
+
+function generateBillsFromBookings() {
+    const bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
+    const bills = bookedServices.map(service => ({
+        date: service.date,
+        service: service.name,
+        amount: `$${Math.floor(Math.random() * 50 + 100)}`, // Random price between $100 and $150
+        status:  "Unpaid" // Randomly assign "Paid" or "Unpaid"
+    }));
+
+    localStorage.setItem('bills', JSON.stringify(bills)); // Save bills in local storage
+}
+
+
+
+function displayBills() {
+    const billsList = document.getElementById('billsList');
+    billsList.innerHTML = ''; // Clear any existing content
+
+    const bills = JSON.parse(localStorage.getItem('bills')) || [];
+
+    if (bills.length === 0) {
+        billsList.textContent = "No bills available.";
+    } else {
+        bills.forEach(bill => {
+            const billDiv = document.createElement('div');
+            billDiv.classList.add('bill-item');
+            billDiv.innerHTML = `
+                <p>Date: ${bill.date}</p>
+                <p>Service: ${bill.service}</p>
+                <p>Amount: ${bill.amount}</p>
+                <p>Status: ${bill.status}</p>
+            `;
+            billsList.appendChild(billDiv);
+        });
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('availableServices')) displayAvailableServices();
+    if (document.getElementById('billsList')) displayBills();
 });

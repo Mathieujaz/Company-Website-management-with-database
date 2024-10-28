@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Bills and Receipts</title>
+    <link rel="stylesheet" href="styles.css">
+   
+    <style>
+       body {
+    background-color: #D6C0B3; /* Lighter background for better contrast */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.billing-container {
+    background-color: #7b5e47;  /* Darker brown for contrast */
+    color: #ffffff; /* White text for readability */
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.bill-item {
+    background-color: #f0c3a2; /* Medium brown for bill items */
+    color: #ffffff; /* White text for readability */
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+    font-size: 1em;
+}
+
+.bill-item p {
+    margin: 5px 0;
+}
+
+    </style>
+</head>
+<body>
+    <div class="billing-container">
+        <h1>Your Bills and Receipts</h1>
+        <div id="billsList">Loading bills...</div>
+        <p><a href="ClientDash.html" class="return-button">Return to Dashboard</a></p>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
