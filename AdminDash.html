@@ -87,6 +87,21 @@
         background-color: red;
     }
 
+    #deleteAccountButton {
+        background-color: rgb(17, 196, 232);
+        color: white;
+        margin: 5px;
+        padding: 9px 43px;
+        border-radius: 50px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 1.1em;
+        font-weight: 500;
+        border: 2px solid #ffffff;
+    }
+
+        #deleteAccountButton:hover {
+            background-color: rgb(13, 159, 188);
+        }
 </style>
 
 </head>
@@ -101,7 +116,8 @@
     <div class="homepagedash">
         <div class="section" id="management">
             <h2>Account Management</h2>
-            
+            <button onclick="deleteAdminAccount()" id="deleteAccountButton">Delete Account</button>
+
         </div>
 
         <div class="section" id="editbusiness">
@@ -127,6 +143,28 @@
           
             window.location.href = 'AdminLogin.html';
         }
+
+        function deleteAdminAccount() {
+    const currentAdmin = JSON.parse(localStorage.getItem('currentUser'));
+
+    if (currentAdmin) {
+        const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');
+
+        if (confirmation) {
+           
+            localStorage.removeItem('businessAccount');
+            localStorage.removeItem('currentUser'); 
+
+            alert('Your admin account has been deleted successfully.');
+            window.location.href = 'BusinessHomePage.html'; 
+        }
+    } else {
+        alert('No admin is currently logged in.'); 
+        window.location.href = 'BusinessHomePage.html'; 
+    }
+}
+
+
     </script>
     
     <script src="scripts.js"></script>

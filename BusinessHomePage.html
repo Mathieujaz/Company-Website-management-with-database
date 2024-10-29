@@ -37,23 +37,21 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); 
-    
-           
-            const storedAccount = JSON.parse(localStorage.getItem('businessAccount'));
-            const enteredUsername = document.getElementById('username').value;
-            const enteredPassword = document.getElementById('password').value;
-    
-            
-            if (storedAccount && storedAccount.username === enteredUsername && storedAccount.password === enteredPassword) {
-                
-                window.location.href = 'AdminDash.html';
-            } else {
-                alert('Invalid username or password');
-            }
-        });
+  document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault(); 
 
+    const storedAccount = JSON.parse(localStorage.getItem('businessAccount'));
+    const enteredUsername = document.getElementById('username').value;
+    const enteredPassword = document.getElementById('password').value;
+
+    if (storedAccount && storedAccount.username === enteredUsername && storedAccount.password === enteredPassword) {
+        // Set currentUser in localStorage to manage login status
+        localStorage.setItem('currentUser', JSON.stringify(storedAccount));
+        window.location.href = 'AdminDash.html'; 
+    } else {
+        alert('Invalid username or password');
+    }
+});
 
 
     document.addEventListener('DOMContentLoaded', () => {
