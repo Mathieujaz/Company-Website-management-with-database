@@ -102,6 +102,49 @@
         #deleteAccountButton:hover {
             background-color: rgb(13, 159, 188);
         }
+
+        
+    #manage-service {
+        background-color: rgb(17, 196, 232);
+        color: white;
+        margin: 5px;
+        padding: 9px 43px;
+        border-radius: 50px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 1.1em;
+        font-weight: 500;
+        border: 2px solid #ffffff;
+       
+
+    }
+
+    #manage-service:hover {
+            background-color: rgb(13, 159, 188);
+    }
+
+    .section h2 {
+    margin-bottom: 30px;
+}
+
+#confirmservice {
+        background-color: rgb(17, 196, 232);
+        color: white;
+        margin: 5px;
+        padding: 9px 43px;
+        border-radius: 50px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 1.1em;
+        font-weight: 500;
+        border: 2px solid #ffffff;
+        margin-top: -10px;
+        margin-top: 30px;
+
+    }
+
+    #confirmservice:hover {
+            background-color: rgb(13, 159, 188);
+    }
+    
 </style>
 
 </head>
@@ -127,7 +170,9 @@
 
         <div class="section" id="services">
             <h2>Service Management</h2>
-          
+            <button onclick="window.location.href='ManageServices'" id="manage-service">Edit services</button>
+            <button onclick="window.location.href='ConfirmService'" id="confirmservice">Confirm services</button>
+            
         </div>
 
         <div class="section" id="bill">
