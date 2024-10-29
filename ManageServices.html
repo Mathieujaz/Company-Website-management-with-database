@@ -4,8 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Services</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js" defer></script>
 </head>
 <body>
-    
+    <div class="homepage">
+        <h1>Manage Services</h1>
+        
+        <div class="input-text">
+            <label for="service1">Service 1 Description:</label>
+            <input type="text" id="service1" placeholder="Enter Service 1 description">
+        </div>
+        
+        <div class="input-text">
+            <label for="service2">Service 2 Description:</label>
+            <input type="text" id="service2" placeholder="Enter Service 2 description">
+        </div>
+        
+        <button id="saveServices">Save Changes</button>
+        
+        <p><a href="AdminDash.html" class="return-button">Return to Dashboard</a></p>
+    </div>
+
+    <script>
+        document.getElementById("saveServices").addEventListener("click", () => {
+            
+            const service1Desc = document.getElementById("service1").value;
+            const service2Desc = document.getElementById("service2").value;
+
+            
+            localStorage.setItem("service1", service1Desc);
+            localStorage.setItem("service2", service2Desc);
+
+            alert("Service descriptions updated successfully!");
+        });
+    </script>
 </body>
 </html>

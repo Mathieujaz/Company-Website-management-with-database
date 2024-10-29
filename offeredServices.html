@@ -40,14 +40,14 @@
     flex-direction: column;       
     align-items: center;         
     justify-content: center;     
+    text-align: center; 
 }
 
-        .serviceblock {
+.serviceblock {
     margin-top: 20px;
     background-color: #493628;
-    width: 50%;
-    padding: 30px;
-    padding-top: 5px;
+    width: 40%; 
+    padding: 20px; 
     border-radius: 20px;
     display: flex;                 
     flex-direction: column;        
@@ -70,35 +70,75 @@
     margin-top: 25px;
 }
 
+p{
+    color: white;
+}
+
+#availableServices {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#booking {
+        background-color: rgb(17, 196, 232);
+        color: white;
+        margin: 5px;
+        padding: 9px 15px;
+        border-radius: 50px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 1em;
+        font-weight: 500;
+        border: 2px solid #ffffff;
+        margin-top: -10px;
+        margin-top: 30px;
+
+    }
+
+    #booking:hover {
+            background-color: rgb(13, 159, 188);
+    }
+
     </style>
-</head>
-<body>
+</head><body>
     <div class="homepageoffered">
-    <h1 class="dash">Offered Services</h1>
-    
-    
-    <div id="availableServices">
-    </div>
-    <!-- <h2>Your Booked Services:</h2>
-    <div id="bookedServicesList">No services booked.</div>
-     <div>
-    <div class="serviceblock">
-        <h2 id="schedule-service">Schedule Service</h2>
-        <p id="selectedService"></p>
-        <label for="scheduleDate" id="selectdate">Select Date:</label>
-        <input type="date" id="scheduleDate">
-      
-        <button onclick="confirmScheduling()">Confirm Scheduling</button>
-    -->
-    
-    </br> </br>
-            <p><a href="ClientDash.html" class="return-button">Return to Dashboard</a></p>
-    
-    
-    </div>
-    </div>
-        <script src="scripts.js"></script>
+        <h1 class="dash">Offered Services</h1>
 
+        <div id="availableServices">
+            <div class="serviceblock" id="serviceBlock1">
+                <p id="service1Desc">Service 1: Description for Service 1</p>
+                <button onclick="bookService('Service 1')" id="booking">Book Now</button>
+            </div>
+            <div class="serviceblock" id="serviceBlock2">
+                <p id="service2Desc">Service 2: Description for Service 2</p>
+                <button onclick="bookService('Service 2')" id="booking"> Book Now</button>
+            </div>
+        </div>
 
+        <br><br>
+        <p><a href="ClientDash.html" class="return-button">Return to Dashboard</a></p>
+    </div>
 </body>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Get elements for service descriptions
+    const service1Desc = document.getElementById("service1Desc");
+    const service2Desc = document.getElementById("service2Desc");
+
+    // Retrieve custom descriptions from localStorage if they exist
+    const service1Text = localStorage.getItem("service1");
+    const service2Text = localStorage.getItem("service2");
+
+    // Update descriptions if custom text is found
+    if (service1Text) service1Desc.textContent = service1Text;
+    if (service2Text) service2Desc.textContent = service2Text;
+});
+
+function bookService(serviceName) {
+    alert(`${serviceName} has been booked!`);
+}
+</script>
+<script src="scripts.js"></script>
 </html>

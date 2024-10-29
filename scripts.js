@@ -144,29 +144,6 @@ function deleteAccount() {
     }
 }
 
-// Array of available services (generic and adaptable for any business type)
-const availableServices = [
-    { name: "Service A", description: "Description for Service A" },
-    { name: "Service B", description: "Description for Service B" }
-];
-
-// Load booked services from localStorage, or initialize as an empty array if none exist
-let bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
-
-// Function to display available services dynamically
-function displayAvailableServices() {
-    const availableServicesDiv = document.getElementById('availableServices');
-    availableServicesDiv.innerHTML = ''; // Clear any existing content
-
-    availableServices.forEach(service => {
-        const serviceDiv = document.createElement('div');
-        serviceDiv.innerHTML = `
-            <p>${service.name}: ${service.description}</p>
-            <button onclick="bookService('${service.name}')">Book Now</button>
-        `;
-        availableServicesDiv.appendChild(serviceDiv);
-    });
-}
 
 // Function to book a service
 function bookService(serviceName) {
@@ -332,4 +309,19 @@ function displayBills() {
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('availableServices')) displayAvailableServices();
     if (document.getElementById('billsList')) displayBills();
+});
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const service1Desc = document.getElementById("service1Desc");
+    const service2Desc = document.getElementById("service2Desc");
+
+    // Retrieve custom descriptions from localStorage if they exist
+    const service1Text = localStorage.getItem("service1");
+    const service2Text = localStorage.getItem("service2");
+
+    // Update descriptions if custom text is found
+    if (service1Text) service1Desc.textContent = service1Text;
+    if (service2Text) service2Desc.textContent = service2Text;
 });
