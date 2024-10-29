@@ -176,17 +176,22 @@ p{
     </div>
     
     <script>
-      document.getElementById('businessProfileForm').addEventListener('submit', function (e) {
-          e.preventDefault();
-  
-          const businessName = document.getElementById('business-name').value;
-          localStorage.setItem('businessName', businessName);
-  
-          alert('Business name updated successfully!');
-          
-          // Redirect to the dashboard after updating the name
-          window.location.href = 'AdminDash.html';
-      });
+     document.getElementById('businessProfileForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const businessName = document.getElementById('business-name').value;
+      const businessContact = document.getElementById('business-contact').value;
+      const businessAddress = document.getElementById('business-address').value;
+
+      localStorage.setItem('businessName', businessName);
+      localStorage.setItem('contactNumber', businessContact); // Save contact number
+      localStorage.setItem('businessAddress', businessAddress); // Save business address
+
+      alert('Business profile updated successfully!');
+      
+      // Redirect to the dashboard after updating the profile
+      window.location.href = 'AdminDash.html';
+   });
   
       function changeLogo(event) {
           const file = event.target.files[0];

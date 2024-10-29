@@ -9,6 +9,14 @@
     h1{
       text-align: center;
     }
+
+    footer{
+      background-color: #fec196 ;
+      width: 100%;
+      text-align: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      
+    }
    </style>
 </head>
 
@@ -19,7 +27,7 @@
    <nav class = "navigation">
         <a href="#"> Home</a>
         <a href="#"> Services</a>
-        <a href="#"> Contact</a>
+        <a href="#contactNumber"> Contact</a>
        <a href="HomePage.html" class="loginbutton">Login</a>
    </nav>
 </header>
@@ -30,13 +38,15 @@
   <section>
     <h1 id="companyname">Company Name</h1>
     <article>
-        <h1 class= "statement">THE NUMBER #1 CLEANING COMPANY IN MONTREAL</h1>
+        <h1 class= "statement">Description</h1>
     </article>
   </section>
 
 
-
-
+  <footer>
+    <p>Contact Number: <span id="contactNumber">(123) 456-7890</span></p>
+    <p>Business Address: <span id="businessAddress">123 Clean St, Montreal, QC</span></p>
+ </footer>
        
         
   </body>
@@ -50,6 +60,12 @@
     if (storedBusinessName) {
       document.getElementById('companyname').textContent = storedBusinessName;
     }
+
+    const storedContactNumber = localStorage.getItem('contactNumber') || 'Contact Number: ';
+      const storedBusinessAddress = localStorage.getItem('businessAddress') || 'Business Address: ';
+
+      document.getElementById('contactNumber').textContent = storedContactNumber;
+      document.getElementById('businessAddress').textContent = storedBusinessAddress;
   });
 
     function setLogo() {
