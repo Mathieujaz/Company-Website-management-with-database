@@ -145,25 +145,30 @@ function deleteAccount() {
 }
 
 
-// Function to book a service
+
+
 function bookService(serviceName) {
     const bookingDate = prompt("Enter a date for booking (YYYY-MM-DD):");
 
     if (bookingDate) {
+        // Retrieve existing bookings from localStorage or initialize an empty array if none exist
+        let bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
+        
+        // Create the service object and add it to bookedServices
         const service = { name: serviceName, date: bookingDate };
         bookedServices.push(service);
 
-        // Save the updated booked services list in localStorage
+        // Save the updated booked services list back to localStorage
         localStorage.setItem('bookedServices', JSON.stringify(bookedServices));
 
-        //displayBookedServices();
+        // Show a confirmation message to the user
         alert(`${serviceName} booked on ${bookingDate}`);
-        generateBillsFromBookings();
-    
 
+        // Generate bills and update overview after booking
+        generateBillsFromBookings();
+        displayOverview();
     }
 }
-
 // Function to display booked services on the Offered Services page
 function displayBookedServices() {
     const bookedServicesList = document.getElementById('bookedServicesList');
@@ -278,6 +283,10 @@ function generateBillsFromBookings() {
     }));
 
     localStorage.setItem('bills', JSON.stringify(bills)); // Save bills in local storage
+     // Refresh bills display if on the View Bills page
+     if (document.getElementById('billsList')) {
+        displayBills();
+    }
 }
 
 
@@ -307,7 +316,8 @@ function displayBills() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('availableServices')) displayAvailableServices();
+    if (document.getElementById('futureServices')) displayOverview();
+    //if (document.getElementById('availableServices')) displayAvailableServices();
     if (document.getElementById('billsList')) displayBills();
 });
 
