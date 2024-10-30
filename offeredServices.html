@@ -123,15 +123,14 @@ p{
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    // Get elements for service descriptions
+  
     const service1Desc = document.getElementById("service1Desc");
     const service2Desc = document.getElementById("service2Desc");
 
-    // Retrieve custom descriptions from localStorage if they exist
+
     const service1Text = localStorage.getItem("service1");
     const service2Text = localStorage.getItem("service2");
 
-    // Update descriptions if custom text is found
     if (service1Text) service1Desc.textContent = service1Text;
     if (service2Text) service2Desc.textContent = service2Text;
 });

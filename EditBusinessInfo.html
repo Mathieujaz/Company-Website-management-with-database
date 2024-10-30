@@ -184,12 +184,10 @@ p{
       const businessAddress = document.getElementById('business-address').value;
 
       localStorage.setItem('businessName', businessName);
-      localStorage.setItem('contactNumber', businessContact); // Save contact number
-      localStorage.setItem('businessAddress', businessAddress); // Save business address
+      localStorage.setItem('contactNumber', businessContact); 
+      localStorage.setItem('businessAddress', businessAddress); 
 
       alert('Business profile updated successfully!');
-      
-      // Redirect to the dashboard after updating the profile
       window.location.href = 'AdminDash.html';
    });
   
@@ -198,30 +196,27 @@ p{
           const reader = new FileReader();
   
           reader.onload = function(e) {
-              localStorage.setItem('logoSrc', e.target.result); // Save logo source to localStorage
-              setLogo(); // Set the logo immediately after upload
+              localStorage.setItem('logoSrc', e.target.result); 
+              setLogo(); 
           };
   
           if (file) {
               reader.readAsDataURL(file);
           }
       }
-  
-      // This function sets the logo when the page loads
       function setLogo() {
           const savedLogoSrc = localStorage.getItem('logoSrc');
           if (savedLogoSrc) {
               const logoImage = document.getElementById('logoImage');
-              logoImage.src = savedLogoSrc; // Update logo source
+              logoImage.src = savedLogoSrc;
           }
       }
   
       window.onload = function() {
-          setLogo(); // Call setLogo on page load
-          // Also set the business name field on page load
+          setLogo();
           const savedBusinessName = localStorage.getItem('businessName');
           if (savedBusinessName) {
-              document.getElementById('business-name').value = savedBusinessName; // Set saved business name in the input
+              document.getElementById('business-name').value = savedBusinessName; 
           }
       };
   </script>

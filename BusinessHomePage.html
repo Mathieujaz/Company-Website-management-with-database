@@ -45,7 +45,7 @@
     const enteredPassword = document.getElementById('password').value;
 
     if (storedAccount && storedAccount.username === enteredUsername && storedAccount.password === enteredPassword) {
-        // Set currentUser in localStorage to manage login status
+        
         localStorage.setItem('currentUser', JSON.stringify(storedAccount));
         window.location.href = 'AdminDash.html'; 
     } else {
@@ -55,7 +55,7 @@
 
 
     document.addEventListener('DOMContentLoaded', () => {
-        const companyName = localStorage.getItem('businessName') || 'Company name'; // Default if not set
+        const companyName = localStorage.getItem('businessName') || 'Company name'; 
         document.getElementById('companyname').textContent = companyName;
     });
 

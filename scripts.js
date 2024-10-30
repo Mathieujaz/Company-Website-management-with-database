@@ -1,9 +1,8 @@
-//FOR LOGIN AND SIGN IN + CREATING ARRAY
+
 console.log("JavaScript is loaded and running!");
-// Array to hold all clients
 let clients = JSON.parse(localStorage.getItem('clients')) || [];
 
-// Function to register a new user
+
 function registerUser() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
@@ -12,8 +11,6 @@ function registerUser() {
     const phone = document.getElementById('phone').value;
     const address = document.getElementById('address').value;
     
-
-    // Create a new client object
     let newClient = {
         username: username,
         password: password,
@@ -23,28 +20,24 @@ function registerUser() {
         address: address
     };
 
-    // Add the new client to the clients array
     clients.push(newClient);
 
-    // Save the updated array in local storage
     localStorage.setItem('clients', JSON.stringify(clients));
 
-    // Redirect to login page after registration
     window.location.href = './HomePage.html';
 }
 
-// Function to login a user
 function loginUser() {
     const enteredUsername = document.getElementById('username').value;
     const enteredPassword = document.getElementById('password').value;
 
     let clients = JSON.parse(localStorage.getItem('clients')) || [];
-    // Find the user in the clients array
+    
     let foundUser = clients.find(client => 
         client.username === enteredUsername && client.password === enteredPassword);
     
     if (foundUser) {
-        // Redirect to the client dashboard
+      
         localStorage.setItem('currentUser', JSON.stringify(foundUser));
         window.location.href = './ClientDash.html';
     } else {
@@ -53,7 +46,6 @@ function loginUser() {
 }
 
 
-// to edit account (client)
 function submitChanges() {
     const updatedName = document.getElementById('name').value;
     const updatedUsername = document.getElementById('username').value;
@@ -61,33 +53,31 @@ function submitChanges() {
     const updatedPhone = document.getElementById('phone').value;
     const updatedAddress = document.getElementById('address').value;
 
-    // Get the currently logged-in user (could be stored during login)
-    const currentUser = JSON.parse(localStorage.getItem('currentUser')); // Assuming you store the logged-in user here
+  
+    const currentUser = JSON.parse(localStorage.getItem('currentUser')); 
 
-    // Get all clients from localStorage
+ 
     let clients = JSON.parse(localStorage.getItem('clients')) || [];
 
-    // Find the current client in the array
     let clientIndex = clients.findIndex(client => client.username === currentUser.username);
 
     if (clientIndex !== -1) {
-        // Update the found client object with the new data
+    
         clients[clientIndex] = {
             username: updatedUsername,
-            password: clients[clientIndex].password, // Keep the same password
+            password: clients[clientIndex].password, 
             name: updatedName,
             email: updatedEmail,
             phone: updatedPhone,
             address: updatedAddress
         };
 
-        // Save the updated clients array back to localStorage
         localStorage.setItem('clients', JSON.stringify(clients));
 
-        // Also update the currently logged-in user data
+      
         localStorage.setItem('currentUser', JSON.stringify(clients[clientIndex]));
 
-        // Notify the user and redirect to the dashboard
+      
         alert('Account updated successfully!');
         window.location.href = './ClientDash.html';
     
@@ -95,45 +85,43 @@ function submitChanges() {
 }
 
 
-//sign out 
+ 
 function signOut() {
-    // Clear user data from localStorage (or session data if you had that)
+
     localStorage.removeItem('user');
 
-    // Redirect to the main page after signing out
+ 
     window.location.href = 'mainpage.html';
 }
 
-//delete account 
+
 function deleteAccount() {
-    // Get the currently logged-in user
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
     if (currentUser) {
-        // Ask for user confirmation
+       
         const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');
 
         if (confirmation) {
-            // Get all clients from localStorage
+            
             let clients = JSON.parse(localStorage.getItem('clients')) || [];
 
-            // Find the index of the current user in the clients array
+          
             let clientIndex = clients.findIndex(client => client.username === currentUser.username);
 
             if (clientIndex !== -1) {
-                // Remove the client from the array
+                
                 clients.splice(clientIndex, 1);
 
-                // Save the updated clients array back to localStorage
+            
                 localStorage.setItem('clients', JSON.stringify(clients));
 
-                // Clear the current user data
+              
                 localStorage.removeItem('currentUser');
 
-                // Notify the user
+                
                 alert('Your account has been deleted successfully.');
 
-                // Redirect to the main page or login page
                 window.location.href = 'mainpage.html';
             } else {
                 alert('Account not found.');
@@ -151,25 +139,22 @@ function bookService(serviceName) {
     const bookingDate = prompt("Enter a date for booking (YYYY-MM-DD):");
 
     if (bookingDate) {
-        // Retrieve existing bookings from localStorage or initialize an empty array if none exist
+    
         let bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
-        
-        // Create the service object and add it to bookedServices
+    
         const service = { name: serviceName, date: bookingDate };
         bookedServices.push(service);
 
-        // Save the updated booked services list back to localStorage
         localStorage.setItem('bookedServices', JSON.stringify(bookedServices));
 
-        // Show a confirmation message to the user
         alert(`${serviceName} booked on ${bookingDate}`);
 
-        // Generate bills and update overview after booking
+ 
         generateBillsFromBookings();
         displayOverview();
     }
 }
-// Function to display booked services on the Offered Services page
+
 function displayBookedServices() {
     const bookedServicesList = document.getElementById('bookedServicesList');
     bookedServicesList.innerHTML = '';
@@ -185,9 +170,9 @@ function displayBookedServices() {
     }
 }
 
-// Function to display future and past services on the Overview page
+
 function displayOverview() {
-    // Reload booked services from localStorage to ensure data is up-to-date
+  
    bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
 
     const futureServicesDiv = document.getElementById('futureServices');
@@ -217,7 +202,7 @@ function displayOverview() {
     }
 }
 
-// Function to display and manage cancelable services on the Cancel Service page
+
 function displayCancelableServices() {
 
     bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
@@ -239,27 +224,23 @@ function displayCancelableServices() {
     }
 }
 
-// Function to cancel a service
 function cancelService(index) {
     const canceledService = bookedServices.splice(index, 1)[0];
     alert(`${canceledService.name} on ${canceledService.date} has been canceled.`);
 
-    // Update the localStorage with the modified booked services list
     localStorage.setItem('bookedServices', JSON.stringify(bookedServices));
     let bills = JSON.parse(localStorage.getItem('bills')) || [];
     bills = bills.filter(bill => !(bill.service === canceledService.name && bill.date === canceledService.date));
 
-    // Save the updated bills in localStorage
+
     localStorage.setItem('bills', JSON.stringify(bills));
-    displayCancelableServices();  // Refresh the list after canceling
+    displayCancelableServices(); 
 }
-// Refresh the bills list if on the ViewBills page
-//displayOverview();
+
 if (document.getElementById('billsList')) {
     displayBills();
 }
 
-// Call functions on specific pages based on their elements
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('availableServices')) displayAvailableServices();
     if (document.getElementById('bookedServicesList')) displayBookedServices();
@@ -269,25 +250,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-
-
-
-
-// Array to hold all booked services (initialize from local storage or as an empty array)
-
-
-
 function generateBillsFromBookings() {
     const bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
     const bills = bookedServices.map(service => ({
         date: service.date,
         service: service.name,
-        amount: `$${Math.floor(Math.random() * 50 + 100)}`, // Random price between $100 and $150
-        status:  "Unpaid" // Randomly assign "Paid" or "Unpaid"
+        amount: `$${Math.floor(Math.random() * 50 + 100)}`, 
+        status:  "Unpaid" 
     }));
 
-    localStorage.setItem('bills', JSON.stringify(bills)); // Save bills in local storage
-     // Refresh bills display if on the View Bills page
+    localStorage.setItem('bills', JSON.stringify(bills));
+     
      if (document.getElementById('billsList')) {
         displayBills();
     }
@@ -298,14 +271,14 @@ function generateBillsFromBookings() {
 function displayBills() {
     const bills = JSON.parse(localStorage.getItem('bills')) || [];
     const billsList = document.getElementById('billsList');
-    billsList.innerHTML = ''; // Clear any existing content
+    billsList.innerHTML = ''; 
 
     if (bills.length === 0) {
         billsList.textContent = "No bills available.";
     } else {
         bills.forEach(bill => {
             const billDiv = document.createElement('div');
-            //billDiv.classList.add('bill-item');
+            
             billDiv.innerHTML = `
                 <p>Date: ${bill.date}</p>
                 <p>Service: ${bill.service}</p>
@@ -330,11 +303,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const service1Desc = document.getElementById("service1Desc");
     const service2Desc = document.getElementById("service2Desc");
 
-    // Retrieve custom descriptions from localStorage if they exist
     const service1Text = localStorage.getItem("service1");
     const service2Text = localStorage.getItem("service2");
 
-    // Update descriptions if custom text is found
     if (service1Text) service1Desc.textContent = service1Text;
     if (service2Text) service2Desc.textContent = service2Text;
 });
