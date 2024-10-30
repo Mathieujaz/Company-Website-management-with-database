@@ -188,7 +188,7 @@ function displayBookedServices() {
 // Function to display future and past services on the Overview page
 function displayOverview() {
     // Reload booked services from localStorage to ensure data is up-to-date
-    bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
+   bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
 
     const futureServicesDiv = document.getElementById('futureServices');
     const pastServicesDiv = document.getElementById('pastServices');
@@ -219,7 +219,10 @@ function displayOverview() {
 
 // Function to display and manage cancelable services on the Cancel Service page
 function displayCancelableServices() {
+
+    bookedServices = JSON.parse(localStorage.getItem('bookedServices')) || [];
     const cancelServicesList = document.getElementById('cancelServicesList');
+    const noServicesMessage = document.getElementById('noServicesMessage');
     cancelServicesList.innerHTML = '';
 
     if (bookedServices.length === 0) {
@@ -251,6 +254,7 @@ function cancelService(index) {
     displayCancelableServices();  // Refresh the list after canceling
 }
 // Refresh the bills list if on the ViewBills page
+//displayOverview();
 if (document.getElementById('billsList')) {
     displayBills();
 }
@@ -292,17 +296,16 @@ function generateBillsFromBookings() {
 
 
 function displayBills() {
+    const bills = JSON.parse(localStorage.getItem('bills')) || [];
     const billsList = document.getElementById('billsList');
     billsList.innerHTML = ''; // Clear any existing content
-
-    const bills = JSON.parse(localStorage.getItem('bills')) || [];
 
     if (bills.length === 0) {
         billsList.textContent = "No bills available.";
     } else {
         bills.forEach(bill => {
             const billDiv = document.createElement('div');
-            billDiv.classList.add('bill-item');
+            //billDiv.classList.add('bill-item');
             billDiv.innerHTML = `
                 <p>Date: ${bill.date}</p>
                 <p>Service: ${bill.service}</p>
@@ -317,7 +320,7 @@ function displayBills() {
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('futureServices')) displayOverview();
-    //if (document.getElementById('availableServices')) displayAvailableServices();
+    if (document.getElementById('availableServices')) displayAvailableServices();
     if (document.getElementById('billsList')) displayBills();
 });
 
