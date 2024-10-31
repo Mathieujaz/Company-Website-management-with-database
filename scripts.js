@@ -267,7 +267,6 @@ function generateBillsFromBookings() {
 }
 
 
-
 function displayBills() {
     const bills = JSON.parse(localStorage.getItem('bills')) || [];
     const billsList = document.getElementById('billsList');
@@ -278,7 +277,14 @@ function displayBills() {
     } else {
         bills.forEach(bill => {
             const billDiv = document.createElement('div');
+
             
+            billDiv.style.backgroundColor = '#f0c3a2'; 
+            billDiv.style.color = '#333333';
+            billDiv.style.padding = '15px';
+            billDiv.style.borderRadius = '10px';
+            billDiv.style.margin = '10px 0';
+
             billDiv.innerHTML = `
                 <p>Date: ${bill.date}</p>
                 <p>Service: ${bill.service}</p>
@@ -289,7 +295,6 @@ function displayBills() {
         });
     }
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('futureServices')) displayOverview();

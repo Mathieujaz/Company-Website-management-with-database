@@ -3,9 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirm Service</title>
+    <title>Confirm Service Requests</title>
+    <link rel="stylesheet" href="styles.css">
+   
+    <style>
+        body {
+            background-color: #D6C0B3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            background-color: #7b5e47;
+            color: white;
+            padding: 50px;
+            border-radius: 15px;
+            text-align: center;
+            width: 70%;
+        }
+        .service-item {
+            background-color: #ffffff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            color: black; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .confirm-button {
+            background-color: #AB886D;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .clear-button {
+            background-color: #ff4d4d; 
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;  
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        .confirmed-services {
+            margin-top: 30px;
+            border-top: 2px solid #AB886D;
+            padding-top: 15px;
+        }
+        .subtitle {
+            color: rgb(255, 204, 0);
+            margin: 20px 0 10px;
+        }
+    </style>
 </head>
 <body>
-    
+
+    <div class="container">
+        <h1>Confirm Service Requests</h1>
+
+        <h2 class="subtitle">Pending Service Requests:</h2>
+        <div id="pendingServices"></div>
+
+        <div class="confirmed-services">
+            <h2 class="subtitle">Confirmed Services:</h2>
+            <div id="confirmedServices"></div>
+            
+        </div>
+        
+    </div>
+    <p><a href="AdminDash.html" class="return-button">Return to Dashboard</a></p>
+
+    <script>
+        const pendingServices = JSON.parse(localStorage.getItem("bookedServices")) || [];
+        const confirmedServices = JSON.parse(localStorage.getItem("confirmedServices")) || [];
+
+        function displayPendingServices() {
+            const pendingContainer = document.getElementById("pendingServices");
+            pendingContainer.innerHTML = "";
+
+            if (pendingServices.length === 0) {
+                pendingContainer.innerHTML = "<p>No pending services.</p>";
+            } else {
+                pendingServices.forEach((service, index) => {
+                    const serviceItem = document.createElement("div");
+                    serviceItem.classList.add("service-item");
+                    serviceItem.innerHTML = `
+                        <p>${service.name} on ${service.date}</p>
+                        <button class="confirm-button" onclick="confirmService(${index})">Confirm</button>
+                    `;
+                    pendingContainer.appendChild(serviceItem);
+                });
+            }
+        }
+
+       
+        function confirmService(index) {
+            const confirmedService = pendingServices.splice(index, 1)[0];
+            confirmedServices.push(confirmedService);
+
+            localStorage.setItem("bookedServices", JSON.stringify(pendingServices));
+            localStorage.setItem("confirmedServices", JSON.stringify(confirmedServices));
+
+            
+            displayPendingServices();
+            displayConfirmedServices();
+        }
+
+        
+        function displayConfirmedServices() {
+            const confirmedContainer = document.getElementById("confirmedServices");
+            confirmedContainer.innerHTML = "";
+
+            if (confirmedServices.length === 0) {
+                confirmedContainer.innerHTML = "<p>No confirmed services yet.</p>";
+            } else {
+                confirmedServices.forEach(service => {
+                    const serviceItem = document.createElement("div");
+                    serviceItem.classList.add("service-item");
+                    serviceItem.innerHTML = `
+                        <p>${service.name} on ${service.date}</p>
+                    `;
+                    confirmedContainer.appendChild(serviceItem);
+                });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            displayPendingServices();
+            displayConfirmedServices();
+        });
+    </script>
+
 </body>
 </html>
