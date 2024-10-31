@@ -26,6 +26,7 @@
 
 
 </head>
+<!--
 <body>
     <div class="homepage">
         <h1>Manage Services</h1>
@@ -59,5 +60,87 @@
         });
     </script>
     <script src="scripts.js" defer></script>
+-->
+
+<body>
+<div class="homepage">
+    <h1>Manage Services</h1>
+    
+    <!-- Add new service section -->
+    <div class="input-text">
+        <label for="newService">New Service:</label>
+        <input type="text" id="newService" placeholder="Enter new service name">
+        <button id="addServiceButton">Add Service</button>
+    </div>
+    
+    <!-- List of current services with edit/delete options -->
+    <h2>Existing Services</h2>
+    <div id="serviceList"></div>
+    
+    <p><a href="AdminDash.html" class="return-button">Return to Dashboard</a></p>
+</div>
+
+<script>
+     function initializeDefaultServices() {
+        let services = JSON.parse(localStorage.getItem("services")) || [];
+        
+        // Check if the default services already exist
+        if (services.length === 0) {
+            services = ["Service 1: Description for Service 1", "Service 2: Description for Service 2"];
+            localStorage.setItem("services", JSON.stringify(services));
+        }
+    }
+
+    initializeDefaultServices();
+    function loadServices() {
+        const serviceList = document.getElementById("serviceList");
+        serviceList.innerHTML = ""; // Clear existing list
+
+        let services = JSON.parse(localStorage.getItem("services")) || [];
+        
+        services.forEach((service, index) => {
+            const serviceItem = document.createElement("div");
+            serviceItem.innerHTML = `
+                <input type="text" value="${service}" id="service_${index}">
+                <button onclick="modifyService(${index})">Save</button>
+                <button onclick="deleteService(${index})">Delete</button>
+            `;
+            serviceList.appendChild(serviceItem);
+        });
+    }
+
+    document.getElementById("addServiceButton").addEventListener("click", () => {
+        const newService = document.getElementById("newService").value;
+        if (newService) {
+            let services = JSON.parse(localStorage.getItem("services")) || [];
+            services.push(newService);
+            localStorage.setItem("services", JSON.stringify(services));
+            loadServices();
+            document.getElementById("newService").value = ""; // Clear input
+        } else {
+            alert("Please enter a service name.");
+        }
+    });
+
+    function modifyService(index) {
+        const updatedService = document.getElementById(`service_${index}`).value;
+        let services = JSON.parse(localStorage.getItem("services")) || [];
+        services[index] = updatedService;
+        localStorage.setItem("services", JSON.stringify(services));
+        alert("Service updated successfully!");
+        loadServices();
+    }
+
+    function deleteService(index) {
+        let services = JSON.parse(localStorage.getItem("services")) || [];
+        services.splice(index, 1);
+        localStorage.setItem("services", JSON.stringify(services));
+        alert("Service deleted successfully!");
+        loadServices();
+    }
+
+    document.addEventListener("DOMContentLoaded", loadServices);
+</script>
+<script src="scripts.js" defer></script>
 </body>
 </html>

@@ -122,6 +122,7 @@ p{
 </body>
 
 <script>
+    /*
 document.addEventListener("DOMContentLoaded", () => {
   
     const service1Desc = document.getElementById("service1Desc");
@@ -138,6 +139,36 @@ document.addEventListener("DOMContentLoaded", () => {
 function bookService(serviceName) {
     alert(`${serviceName} has been booked!`);
 }
+*/
+function displayAvailableServices() {
+            const availableServices = document.getElementById("availableServices");
+            availableServices.innerHTML = ""; // Clear previous entries
+
+            // Retrieve services array from localStorage
+            let services = JSON.parse(localStorage.getItem("services")) || [];
+            if (services.length === 0) {
+                availableServices.textContent = "No services available.";
+            } else {
+                services.forEach(service => {
+                    const serviceBlock = document.createElement("div");
+                    serviceBlock.classList.add("serviceblock");
+                    serviceBlock.innerHTML = `
+                        <p>${service}</p>
+                        <button onclick="bookService('${service}')" id="booking">Book Now</button>
+                    `;
+                    availableServices.appendChild(serviceBlock);
+                });
+            }
+        }
+
+        // Load services on page load
+        document.addEventListener("DOMContentLoaded", displayAvailableServices);
+
+        function bookService(serviceName) {
+            alert(`${serviceName} has been booked!`);
+            // Optional: Add booking logic here if needed
+        }
 </script>
+
 <script src="scripts.js"></script>
 </html>
