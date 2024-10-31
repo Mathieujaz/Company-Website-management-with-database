@@ -506,6 +506,10 @@ function displayBills() {
     } else {
         bills.forEach(bill => {
             const billDiv = document.createElement('div');
+
+
+            billDiv.classList.add('bill-item');
+            
             billDiv.innerHTML = `
                 <p>Date: ${bill.date}</p>
                 <p>Service: ${bill.service}</p>
