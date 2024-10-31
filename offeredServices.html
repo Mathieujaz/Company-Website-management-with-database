@@ -122,29 +122,12 @@ p{
 </body>
 
 <script>
-    /*
-document.addEventListener("DOMContentLoaded", () => {
-  
-    const service1Desc = document.getElementById("service1Desc");
-    const service2Desc = document.getElementById("service2Desc");
 
-
-    const service1Text = localStorage.getItem("service1");
-    const service2Text = localStorage.getItem("service2");
-
-    if (service1Text) service1Desc.textContent = service1Text;
-    if (service2Text) service2Desc.textContent = service2Text;
-});
-
-function bookService(serviceName) {
-    alert(`${serviceName} has been booked!`);
-}
-*/
 function displayAvailableServices() {
             const availableServices = document.getElementById("availableServices");
-            availableServices.innerHTML = ""; // Clear previous entries
+            availableServices.innerHTML = ""; 
 
-            // Retrieve services array from localStorage
+           
             let services = JSON.parse(localStorage.getItem("services")) || [];
             if (services.length === 0) {
                 availableServices.textContent = "No services available.";
@@ -161,12 +144,12 @@ function displayAvailableServices() {
             }
         }
 
-        // Load services on page load
+        
         document.addEventListener("DOMContentLoaded", displayAvailableServices);
 
         function bookService(serviceName) {
             alert(`${serviceName} has been booked!`);
-            // Optional: Add booking logic here if needed
+           
         }
 </script>
 
