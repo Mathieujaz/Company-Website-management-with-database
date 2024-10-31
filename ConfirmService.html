@@ -84,10 +84,48 @@
     <p><a href="AdminDash.html" class="return-button">Return to Dashboard</a></p>
 
     <script>
-        const pendingServices = JSON.parse(localStorage.getItem("bookedServices")) || [];
+        const clients = JSON.parse(localStorage.getItem("clients")) || [];
         const confirmedServices = JSON.parse(localStorage.getItem("confirmedServices")) || [];
 
         function displayPendingServices() {
+            const pendingContainer = document.getElementById("pendingServices");
+            pendingContainer.innerHTML = "";
+
+            let allPendingServices = [];
+
+            // Loop through each client and retrieve their pending services
+            clients.forEach(client => {
+                const userKey = `scheduledServices_${client.username}`;
+                const userPendingServices = JSON.parse(localStorage.getItem(userKey)) || [];
+
+                userPendingServices.forEach(service => {
+                    allPendingServices.push({
+                        ...service,
+                        username: client.username  // Track which user the service belongs to
+                    });
+                });
+            });
+
+            if (allPendingServices.length === 0) {
+                pendingContainer.innerHTML = "<p>No pending services.</p>";
+            } else {
+                allPendingServices.forEach((service, index) => {
+                    const serviceItem = document.createElement("div");
+                    serviceItem.classList.add("service-item");
+                    serviceItem.innerHTML = `
+                        <p>${service.name} for ${service.username} on ${service.date}</p>
+                        <button class="confirm-button" onclick="confirmService('${service.username}', ${index})">Confirm</button>
+                    `;
+                    pendingContainer.appendChild(serviceItem);
+                });
+            }
+        }
+
+        
+        //const pendingServices = JSON.parse(localStorage.getItem("bookedServices")) || [];
+        //const confirmedServices = JSON.parse(localStorage.getItem("confirmedServices")) || [];
+
+       /* function displayPendingServices() {
             const pendingContainer = document.getElementById("pendingServices");
             pendingContainer.innerHTML = "";
 
@@ -106,15 +144,25 @@
             }
         }
 
-       
-        function confirmService(index) {
+       */
+       /* function confirmService(index) {
             const confirmedService = pendingServices.splice(index, 1)[0];
             confirmedServices.push(confirmedService);
 
             localStorage.setItem("bookedServices", JSON.stringify(pendingServices));
             localStorage.setItem("confirmedServices", JSON.stringify(confirmedServices));
 
-            
+            */
+            function confirmService(username, index) {
+            const userKey = `scheduledServices_${username}`;
+            let userPendingServices = JSON.parse(localStorage.getItem(userKey)) || [];
+
+            // Remove the confirmed service from the client's pending services
+            const confirmedService = userPendingServices.splice(index, 1)[0];
+            confirmedServices.push({ ...confirmedService, username: username });
+
+            localStorage.setItem(userKey, JSON.stringify(userPendingServices));
+            localStorage.setItem("confirmedServices", JSON.stringify(confirmedServices));
             displayPendingServices();
             displayConfirmedServices();
         }
