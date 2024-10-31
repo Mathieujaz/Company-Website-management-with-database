@@ -17,10 +17,10 @@ body {
             margin: 0;
             padding: 20px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-y: auto;
+          
         }
 
-        /* Main container styling */
+      
         .homepage {
             background-color: #7b5e47;
             color: #ffffff;
@@ -29,7 +29,7 @@ body {
             text-align: center;
             width: 90%;
             max-width: 600px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            height: 700px;
         }
 
         h1 {
@@ -44,7 +44,6 @@ body {
             color: #ffda77;
         }
 
-        /* Input and button styling */
         .input-text {
             margin-bottom: 20px;
             display: flex;
@@ -76,8 +75,6 @@ body {
             font-size: 1.1em;
             font-weight: 500;
             border: none;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
             margin-top: 10px;
         }
 
@@ -86,14 +83,14 @@ body {
             color: #5C4033;
         }
 
-        /* Service list item styling */
+       
         #serviceList div {
-            background-color: #ffffff;
+            background-color: antiquewhite;
             padding: 15px;
             margin: 10px 0;
             border-radius: 8px;
             display: flex;
-            justify-content: space-between;
+
             align-items: center;
             color: #333;
         }
@@ -102,7 +99,6 @@ body {
             width: 70%;
             padding: 8px;
             font-size: 1em;
-            border: 1px solid #ccc;
             border-radius: 5px;
         }
 
@@ -112,32 +108,15 @@ body {
             border: none;
             padding: 5px 10px;
             border-radius: 5px;
-            cursor: pointer;
+        
             margin-left: 5px;
-            transition: background-color 0.3s;
+       
         }
 
         #serviceList button:hover {
             background-color: #5C4033;
         }
 
-        /* Return button styling */
-        .return-button {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 20px;
-            background-color: #AB886D;
-            padding: 10px 20px;
-            border-radius: 20px;
-            transition: background-color 0.3s;
-        }
-
-        .return-button:hover {
-            background-color: #ffda77;
-            color: #5C4033;
-        }  
 
     </style>
 
@@ -145,54 +124,20 @@ body {
 
 
 </head>
-<!--
-<body>
-    <div class="homepage">
-        <h1>Manage Services</h1>
-        
-        <div class="input-text">
-            <label for="service1">Service 1 Description:</label>
-            <input type="text" id="service1" placeholder="Enter Service 1 description">
-        </div>
-        
-        <div class="input-text">
-            <label for="service2">Service 2 Description:</label>
-            <input type="text" id="service2" placeholder="Enter Service 2 description">
-        </div>
-        
-        <button id="saveServices">Save Changes</button>
-        
-        <p><a href="AdminDash.html" class="return-button">Return to Dashboard</a></p>
-    </div>
 
-    <script>
-        document.getElementById("saveServices").addEventListener("click", () => {
-            
-            const service1Desc = document.getElementById("service1").value;
-            const service2Desc = document.getElementById("service2").value;
-
-            
-            localStorage.setItem("service1", service1Desc);
-            localStorage.setItem("service2", service2Desc);
-
-            alert("Service descriptions updated successfully!");
-        });
-    </script>
-    <script src="scripts.js" defer></script>
--->
 
 <body>
 <div class="homepage">
     <h1>Manage Services</h1>
     
-    <!-- Add new service section -->
+   
     <div class="input-text">
         <label for="newService">New Service:</label>
         <input type="text" id="newService" placeholder="Enter new service name">
         <button id="addServiceButton">Add Service</button>
     </div>
     
-    <!-- List of current services with edit/delete options -->
+   
     <h2>Existing Services</h2>
     <div id="serviceList"></div>
     
@@ -203,7 +148,7 @@ body {
      function initializeDefaultServices() {
         let services = JSON.parse(localStorage.getItem("services")) || [];
         
-        // Check if the default services already exist
+      
         if (services.length === 0) {
             services = ["Service 1: Description for Service 1", "Service 2: Description for Service 2"];
             localStorage.setItem("services", JSON.stringify(services));
@@ -213,7 +158,7 @@ body {
     initializeDefaultServices();
     function loadServices() {
         const serviceList = document.getElementById("serviceList");
-        serviceList.innerHTML = ""; // Clear existing list
+        serviceList.innerHTML = ""; 
 
         let services = JSON.parse(localStorage.getItem("services")) || [];
         
@@ -235,7 +180,7 @@ body {
             services.push(newService);
             localStorage.setItem("services", JSON.stringify(services));
             loadServices();
-            document.getElementById("newService").value = ""; // Clear input
+            document.getElementById("newService").value = ""; 
         } else {
             alert("Please enter a service name.");
         }
