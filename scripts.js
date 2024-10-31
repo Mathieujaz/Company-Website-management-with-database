@@ -261,10 +261,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 */
 
-// Array to hold all clients
+
 let clients = JSON.parse(localStorage.getItem('clients')) || [];
 
-// Register a new user
+
 function registerUser() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
@@ -288,7 +288,7 @@ function registerUser() {
     window.location.href = './HomePage.html';
 }
 
-// Log in a user and set `currentUser`
+
 function loginUser() {
     const enteredUsername = document.getElementById('username').value;
     const enteredPassword = document.getElementById('password').value;
@@ -304,7 +304,7 @@ function loginUser() {
     }
 }
 
-// Edit account details for the current user
+
 function submitChanges() {
     const updatedName = document.getElementById('name').value;
     const updatedUsername = document.getElementById('username').value;
@@ -333,13 +333,12 @@ function submitChanges() {
     }
 }
 
-// Sign out
 function signOut() {
     localStorage.removeItem('currentUser');
     window.location.href = 'mainpage.html';
 }
 
-// Delete account for the current user
+
 function deleteAccount() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
@@ -359,7 +358,7 @@ function deleteAccount() {
     }
 }
 
-// Book a service for the current user only
+
 function bookService(serviceName) {
     const bookingDate = prompt("Enter a date for booking (YYYY-MM-DD):");
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -377,7 +376,7 @@ function bookService(serviceName) {
     }
 }
 
-// Display booked services for the current user only
+
 function displayBookedServices() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const userKey = `scheduledServices_${currentUser.username}`;
@@ -397,7 +396,6 @@ function displayBookedServices() {
     }
 }
 
-// Display an overview of future and past services
 function displayOverview() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const userKey = `scheduledServices_${currentUser.username}`;
@@ -429,7 +427,7 @@ function displayOverview() {
     }
 }
 
-// Display cancelable services for the current user
+
 function displayCancelableServices() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const userKey = `scheduledServices_${currentUser.username}`;
@@ -452,7 +450,7 @@ function displayCancelableServices() {
     }
 }
 
-// Cancel a specific service for the current user
+
 function cancelService(index) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const userKey = `scheduledServices_${currentUser.username}`;
@@ -466,18 +464,17 @@ function cancelService(index) {
     displayBills(); 
 }
 
-// Generate bills based on the current user's booked services
 function generateBillsFromBookings() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const userKey = `scheduledServices_${currentUser.username}`;
     const bookedServices = JSON.parse(localStorage.getItem(userKey)) || [];
 
-    // Generate a bill for each booked service, if it doesn't already exist
+   
     const billsKey = `bills_${currentUser.username}`;
     let bills = JSON.parse(localStorage.getItem(billsKey)) || [];
 
     bookedServices.forEach(service => {
-        // Check if the service already has a bill
+      
         const existingBill = bills.find(bill => bill.service === service.name && bill.date === service.date);
         if (!existingBill) {
             bills.push({
@@ -490,10 +487,9 @@ function generateBillsFromBookings() {
     });
 
     localStorage.setItem(billsKey, JSON.stringify(bills));
-    displayBills();  // Ensure bills are displayed after generation
+    displayBills(); 
 }
 
-// Display bills for the current user only
 function displayBills() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const bills = JSON.parse(localStorage.getItem(`bills_${currentUser.username}`)) || [];
@@ -526,7 +522,7 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 )
 
-// Display all client bills for the admin
+
 function displayAllClientBills() {
     const clients = JSON.parse(localStorage.getItem('clients')) || [];
     const billsList = document.getElementById('billsList');
@@ -560,7 +556,7 @@ function displayAllClientBills() {
     });
 }
 
-// Modified DOMContentLoaded event to check if it's the admin page
+
 document.addEventListener('DOMContentLoaded', () => {
     const isAdminPage = document.getElementById('billsList') && document.title.includes("Admin");
     if (isAdminPage) {
