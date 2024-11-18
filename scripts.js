@@ -1,6 +1,6 @@
 
-
-let clients = JSON.parse(localStorage.getItem('clients')) || [];
+//OLD WAY FOR REGISTERUSER()
+/*let clients = JSON.parse(localStorage.getItem('clients')) || [];
 
 
 function registerUser() {
@@ -24,6 +24,38 @@ function registerUser() {
     localStorage.setItem('clients', JSON.stringify(clients));
 
     window.location.href = './HomePage.html';
+}
+
+*/
+//BACKEND FOR REGISTERUSER():
+async function registerUser() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const address = document.getElementById('address').value;
+
+    const newClient = { username, password, name, email, phone, address };
+
+    try {
+        const response = await fetch('http://localhost:5000/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newClient),
+        });
+
+        if (response.ok) {
+            alert('Registration successful!');
+            window.location.href = './HomePage.html';
+        } else {
+            const error = await response.text();
+            alert('Error: ' + error);
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Failed to register. Please try again later.');
+    }
 }
 
 
