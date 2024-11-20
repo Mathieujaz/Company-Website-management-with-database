@@ -1,11 +1,14 @@
 //THIS WILL CREATE A SERVER:
 
-const mysql = require("mysql");
+const mysql =require('mysql');
 const express = require('express'); 
+
+const cors = require('cors');
 const app = express();
 
 const PORT = 5000;
-
+app.use(cors());
+app.use(express.json());
 //THIS WILL TEST 
 app.get('/', (req, res) => {
     res.send('Server is running!');
@@ -34,25 +37,101 @@ app.listen(PORT, () => {
 });
 
 
-
-
-
-
-app.use(express.json());
-
-//REGISTER A NEW USER
 app.post('/register', (req, res) => {
-    const { first_name, last_name, email, phone, password } = req.body;
+    const { name, username, password, phone, email, address } = req.body;
 
-   
-    // Insert the user into the database
-    const query = 'INSERT INTO users (first_name, last_name, email, phone, password) VALUES (?, ?, ?, ?, ?)';
-    db.query(query, [first_name, last_name, email, phone, password], (err, result) => {
+    // Split the full name into first and last name
+    //const [first_name, last_name] = name.split(' '); // Split on the first space
+    // Split name into first and last name
+    const parts = name.trim().split(' ');
+    const first_name = parts[0];
+    const last_name = parts.slice(1).join(' ') || null;
+
+    const query = `
+        INSERT INTO users (first_name, last_name, username, password, phone, email, address) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+    db.query(query, [first_name, last_name, username, password, phone, email, address], (err, result) => {
         if (err) {
-            console.error(err);
+            console.error('Error inserting user into database:', err);
             res.status(500).send('Error registering user');
         } else {
             res.status(201).send('User registered successfully');
         }
+    });
+
+});
+
+// validate username and password 
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    const query = 'SELECT * FROM users WHERE username = ? AND password = ?';
+    db.query(query, [username, password], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error logging in.');
+        }
+        if (results.length === 0) {
+            return res.status(401).send('Invalid username or password.');
+        }
+        //res.status(200).json(results[0]); // Send user data back
+        const user = results[0];
+        res.status(200).json({
+            id: user.id, // Include user ID
+            username: user.username,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            address: user.address
+        });
+    });
+});
+ 
+
+
+
+app.put('/users', (req, res) => {
+    const { id, username, name, email, phone, address } = req.body;
+
+    // Update the user in the database
+    const query = `
+        UPDATE users 
+        SET username = ?, name = ?, email = ?, phone = ?, address = ? 
+        WHERE id = ?
+    `;
+
+    db.query(query, [username, name, email, phone, address, id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error updating user.');
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send('User not found.');
+        }
+
+        // Send the updated user data back
+        const updatedUser = { id, username, name, email, phone, address };
+        res.status(200).json(updatedUser);
+    });
+});
+
+
+app.delete('/users/:id', (req, res) => {
+    const userId = req.params.id;
+
+    const query = 'DELETE FROM users WHERE id = ?';
+    db.query(query, [userId], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error deleting user.');
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send('User not found.');
+        }
+
+        res.status(200).send('User account deleted successfully.');
     });
 });

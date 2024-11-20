@@ -142,11 +142,11 @@
         window.onload = function() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             if (currentUser) {
-                document.getElementById('username').value = currentUser.username;
-                document.getElementById('name').value = currentUser.name;
-                document.getElementById('email').value = currentUser.email;
-                document.getElementById('phone').value = currentUser.phone;
-                document.getElementById('address').value = currentUser.address;
+                document.getElementById('username').value = currentUser.username || '';
+                document.getElementById('name').value = currentUser.name || '';
+                document.getElementById('email').value = currentUser.email || '';
+                document.getElementById('phone').value = currentUser.phone || '';
+                document.getElementById('address').value = currentUser.address || '';
             }
         };
     
