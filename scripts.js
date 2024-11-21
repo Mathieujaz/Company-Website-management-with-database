@@ -547,3 +547,229 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('futureServices')) displayOverview();
     if (document.getElementById('cancelServicesList')) displayCancelableServices();
 });
+
+
+//stuff for services display and everything related to them
+
+async function fetchServices() {
+    try {
+        const response = await fetch('http://localhost:5000/services');
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.error('Failed to fetch services.');
+            return [];
+        }
+    } catch (err) {
+        console.error('Error fetching services:', err);
+        return [];
+    }
+}
+
+// Functions specific to the Manage Services page
+async function loadServices() {
+    const serviceList = document.getElementById("serviceList");
+    serviceList.innerHTML = "";
+
+    const services = await fetchServices();
+    services.forEach(service => {
+        const serviceItem = document.createElement("div");
+        serviceItem.innerHTML = `
+            <input type="text" value="${service.name}" id="service_${service.id}">
+            <textarea id="desc_${service.id}">${service.description}</textarea>
+            <button onclick="modifyService(${service.id})">Save</button>
+            <button onclick="deleteService(${service.id})">Delete</button>
+        `;
+        serviceList.appendChild(serviceItem);
+    });
+}
+
+async function addService() {
+    const name = document.getElementById("newService").value;
+    const description = document.getElementById("newDescription").value;
+
+    try {
+        const response = await fetch('http://localhost:5000/services', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, description }),
+        });
+
+        if (response.ok) {
+            alert('Service added successfully.');
+            loadServices();
+        } else {
+            alert('Failed to add service.');
+        }
+    } catch (err) {
+        console.error('Error adding service:', err);
+    }
+}
+
+// Functions specific to the Offered Services page
+async function displayAvailableServices() {
+    const availableServices = document.getElementById("availableServices");
+    availableServices.innerHTML = "";
+
+    const services = await fetchServices();
+    services.forEach(service => {
+        const serviceBlock = document.createElement("div");
+        serviceBlock.classList.add("serviceblock");
+        serviceBlock.innerHTML = `
+            <p>${service.name}: ${service.description}</p>
+            <button onclick="bookService('${service.name}')">Book Now</button>
+        `;
+        availableServices.appendChild(serviceBlock);
+    });
+}
+
+
+const apiBaseUrl = 'http://localhost:5000/services'; // Change if needed
+
+// Fetch services from backend
+async function fetchServices() {
+    try {
+        const response = await fetch(apiBaseUrl);
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.error('Failed to fetch services');
+            return [];
+        }
+    } catch (error) {
+        console.error('Error fetching services:', error);
+        return [];
+    }
+}
+
+// Load and display services
+async function loadServices() {
+    const serviceList = document.getElementById("serviceList");
+    serviceList.innerHTML = ""; // Clear current list
+
+    const services = await fetchServices();
+
+    services.forEach(service => {
+        const serviceItem = document.createElement("div");
+        serviceItem.innerHTML = `
+            <input type="text" value="${service.name}" id="name_${service.id}">
+            <input type="text" value="${service.description}" id="desc_${service.id}">
+            <button onclick="modifyService(${service.id})">Save</button>
+            <button onclick="deleteService(${service.id})">Delete</button>
+        `;
+        serviceList.appendChild(serviceItem);
+    });
+}
+
+// Add a new service
+async function addService() {
+    const name = document.getElementById("newService").value.trim();
+    const description = document.getElementById("newDescription").value.trim();
+
+    if (!name || !description) {
+        alert("Please enter both service name and description.");
+        return;
+    }
+
+    try {
+        const response = await fetch(apiBaseUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, description }),
+        });
+
+        if (response.ok) {
+            alert('Service added successfully!');
+            loadServices();
+            document.getElementById("newService").value = "";
+            document.getElementById("newDescription").value = "";
+        } else {
+            alert('Failed to add service.');
+        }
+    } catch (error) {
+        console.error('Error adding service:', error);
+    }
+}
+
+// Modify an existing service
+async function modifyService(id) {
+    const name = document.getElementById(`name_${id}`).value.trim();
+    const description = document.getElementById(`desc_${id}`).value.trim();
+
+    if (!name || !description) {
+        alert("Please enter both service name and description.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${apiBaseUrl}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, description }),
+        });
+
+        if (response.ok) {
+            alert('Service updated successfully!');
+            loadServices();
+        } else {
+            alert('Failed to update service.');
+        }
+    } catch (error) {
+        console.error('Error updating service:', error);
+    }
+}
+
+// Delete a service
+async function deleteService(id) {
+    try {
+        const response = await fetch(`${apiBaseUrl}/${id}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            alert('Service deleted successfully!');
+            loadServices();
+        } else {
+            alert('Failed to delete service.');
+        }
+    } catch (error) {
+        console.error('Error deleting service:', error);
+    }
+}
+
+
+
+async function bookService(serviceId) {
+    const bookingDate = prompt("Enter a date for booking (YYYY-MM-DD):");
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    if (!currentUser) {
+        alert('You must be logged in to book a service.');
+        return;
+    }
+
+    if (bookingDate) {
+        try {
+            const response = await fetch('http://localhost:5000/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: currentUser.id,
+                    service_id: serviceId,
+                    booking_date: bookingDate,
+                }),
+            });
+
+            if (response.ok) {
+                alert(`Service booked on ${bookingDate}`);
+                // Optionally, refresh or update the UI
+            } else {
+                const error = await response.text();
+                alert('Error booking service: ' + error);
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            alert('Failed to book the service. Please try again.');
+        }
+    }
+}

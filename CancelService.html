@@ -6,69 +6,55 @@
     <title>Cancel a Service</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        
-     body {
-    background-color: #D6C0B3;
-    text-align: center;
-    display: flex;        
-    justify-content: center;  
-    align-items: center;     
-    height: 100vh;
-    margin: 0;               
-    padding: 20px; 
-}
-
-    .dash {
-        padding: 30px 80px;
-        background-color: #493628;
-        width: auto;
-        display: inline-block; 
-        margin: 0 auto;
-        color: white;
-        border-radius: 20px;
-        margin-bottom: 30px;
+        body {
+            background-color: #D6C0B3;
+            text-align: center;
+            display: flex;        
+            justify-content: center;  
+            align-items: center;     
+            height: 100vh;
+            margin: 0;               
+            padding: 20px; 
         }
-
+        .dash {
+            padding: 30px 80px;
+            background-color: #493628;
+            width: auto;
+            display: inline-block; 
+            margin: 0 auto;
+            color: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
         .homepageoffered {
-    background-color: #AB886D;
-    color: white;
-    width: 40%;
-    padding: 60px;
-    border-radius: 30px;
-    display: flex;                
-    flex-direction: column;       
-    align-items: center;         
-    justify-content: center;     
-}
-
+            background-color: #AB886D;
+            color: white;
+            width: 40%;
+            padding: 60px;
+            border-radius: 30px;
+            display: flex;                
+            flex-direction: column;       
+            align-items: center;         
+            justify-content: center;     
+        }
         .serviceblock {
-    margin-top: 20px;
-    background-color: #493628;
-    width: 50%;
-    padding: 30px;
-    padding-top: 5px;
-    border-radius: 20px;
-    display: flex;                 
-    flex-direction: column;        
-    align-items: center;           
-    text-align: center;
-}
-.serviceblock h2 {
-    margin: 10px 0;
-}
-
-.serviceblock button {
-    margin: 10px 0; 
-}
-
-#selectdate{
-    margin-bottom: 10px;
-}
-
-#schedule-service{
-    margin-top: 25px;
-}
-
+            margin-top: 20px;
+            background-color: #493628;
+            width: 50%;
+            padding: 30px;
+            padding-top: 5px;
+            border-radius: 20px;
+            display: flex;                 
+            flex-direction: column;        
+            align-items: center;           
+            text-align: center;
+        }
+        .serviceblock h2 {
+            margin: 10px 0;
+        }
+        .serviceblock button {
+            margin: 10px 0; 
+        }
     </style>
 </head>
 <body>
@@ -79,10 +65,71 @@
     <p id="noServicesMessage" style="display: none;">No services available to cancel.</p>
     <div>
         <p><a href="ClientDash.html" class="return-button">Return to Dashboard</a></p>
-       
-        
-    <script src="scripts.js"></script>
-   
-    
+    </div>
+
+    <script>
+        // Fetch and display booked services
+        async function displayCancelableServices() {
+            const cancelServicesList = document.getElementById("cancelServicesList");
+            const noServicesMessage = document.getElementById("noServicesMessage");
+
+            try {
+                const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+                if (!currentUser) {
+                    alert("You must be logged in to view your services.");
+                    window.location.href = "HomePage.html";
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:5000/bookings?user_id=${currentUser.id}`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch booked services.");
+                }
+
+                const bookings = await response.json();
+                cancelServicesList.innerHTML = "";
+                noServicesMessage.style.display = bookings.length === 0 ? "block" : "none";
+
+                bookings.forEach(booking => {
+                    const serviceBlock = document.createElement("div");
+                    serviceBlock.classList.add("serviceblock");
+                    serviceBlock.innerHTML = `
+                        <h2>${booking.service_name}</h2>
+                        <p>Date: ${booking.date}</p>
+                        <button onclick="cancelService(${booking.id})">Cancel</button>
+                    `;
+                    cancelServicesList.appendChild(serviceBlock);
+                });
+            } catch (err) {
+                console.error("Error:", err);
+                alert("An error occurred while fetching your services.");
+            }
+        }
+
+        // Cancel a service
+        async function cancelService(bookingId) {
+            const confirmation = confirm("Are you sure you want to cancel this service?");
+            if (!confirmation) return;
+
+            try {
+                const response = await fetch(`http://localhost:5000/bookings/${bookingId}`, {
+                    method: "DELETE",
+                });
+
+                if (response.ok) {
+                    alert("Service canceled successfully.");
+                    displayCancelableServices();
+                } else {
+                    const error = await response.text();
+                    alert("Error canceling service: " + error);
+                }
+            } catch (err) {
+                console.error("Error:", err);
+                alert("Failed to cancel the service. Please try again.");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", displayCancelableServices);
+    </script>
 </body>
 </html>

@@ -7,8 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 
     <style>
-
-body {
+        body {
             background-color: #D6C0B3;
             display: flex;
             justify-content: center;
@@ -17,10 +16,8 @@ body {
             margin: 0;
             padding: 20px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          
         }
 
-      
         .homepage {
             background-color: #7b5e47;
             color: #ffffff;
@@ -29,7 +26,7 @@ body {
             text-align: center;
             width: 90%;
             max-width: 600px;
-            height: 700px;
+            height: auto;
         }
 
         h1 {
@@ -40,12 +37,13 @@ body {
 
         h2 {
             font-size: 1.5em;
-            margin: 90px 0 10px;
+            margin-top: 50px; /* Increased margin to avoid overlap */
+            margin-bottom: 20px;
             color: #ffda77;
         }
 
         .input-text {
-            margin-bottom: 20px;
+            margin-bottom: 40px; /* Increased margin for spacing */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -63,11 +61,11 @@ body {
             padding: 10px;
             border: none;
             border-radius: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 15px; /* Adjusted spacing between inputs */
             font-size: 1em;
         }
 
-        #addServiceButton, #saveServices {
+        #addServiceButton {
             background-color: #5C4033;
             color: #ffffff;
             padding: 10px 20px;
@@ -78,28 +76,32 @@ body {
             margin-top: 10px;
         }
 
-        #addServiceButton:hover, #saveServices:hover {
+        #addServiceButton:hover {
             background-color: #ffffff;
             color: #5C4033;
         }
 
-       
+        #serviceList {
+            margin-top: 20px; /* Added spacing between the title and the list of services */
+        }
+
         #serviceList div {
             background-color: antiquewhite;
             padding: 15px;
-            margin: 10px 0;
+            margin: 15px 0; /* Adjusted spacing between individual services */
             border-radius: 8px;
             display: flex;
-
+            flex-direction: column;
             align-items: center;
             color: #333;
         }
 
         #serviceList input[type="text"] {
-            width: 70%;
+            width: 90%;
             padding: 8px;
             font-size: 1em;
             border-radius: 5px;
+            margin-bottom: 10px;
         }
 
         #serviceList button {
@@ -108,103 +110,36 @@ body {
             border: none;
             padding: 5px 10px;
             border-radius: 5px;
-        
-            margin-left: 5px;
-       
+            margin: 5px;
         }
 
         #serviceList button:hover {
             background-color: #5C4033;
         }
-
-
     </style>
-
-    
-
-
 </head>
-
 
 <body>
 <div class="homepage">
     <h1>Manage Services</h1>
-    
-   
+
     <div class="input-text">
         <label for="newService">New Service:</label>
         <input type="text" id="newService" placeholder="Enter new service name">
+        <input type="text" id="newDescription" placeholder="Enter service description">
         <button id="addServiceButton">Add Service</button>
     </div>
-    
-   
+
     <h2>Existing Services</h2>
     <div id="serviceList"></div>
-    
+
     <p><a href="AdminDash.html" class="return-button">Return to Dashboard</a></p>
 </div>
 
-<script>
-     function initializeDefaultServices() {
-        let services = JSON.parse(localStorage.getItem("services")) || [];
-        
-      
-        if (services.length === 0) {
-            services = ["Service 1: Description for Service 1", "Service 2: Description for Service 2"];
-            localStorage.setItem("services", JSON.stringify(services));
-        }
-    }
-
-    initializeDefaultServices();
-    function loadServices() {
-        const serviceList = document.getElementById("serviceList");
-        serviceList.innerHTML = ""; 
-
-        let services = JSON.parse(localStorage.getItem("services")) || [];
-        
-        services.forEach((service, index) => {
-            const serviceItem = document.createElement("div");
-            serviceItem.innerHTML = `
-                <input type="text" value="${service}" id="service_${index}">
-                <button onclick="modifyService(${index})">Save</button>
-                <button onclick="deleteService(${index})">Delete</button>
-            `;
-            serviceList.appendChild(serviceItem);
-        });
-    }
-
-    document.getElementById("addServiceButton").addEventListener("click", () => {
-        const newService = document.getElementById("newService").value;
-        if (newService) {
-            let services = JSON.parse(localStorage.getItem("services")) || [];
-            services.push(newService);
-            localStorage.setItem("services", JSON.stringify(services));
-            loadServices();
-            document.getElementById("newService").value = ""; 
-        } else {
-            alert("Please enter a service name.");
-        }
-    });
-
-    function modifyService(index) {
-        const updatedService = document.getElementById(`service_${index}`).value;
-        let services = JSON.parse(localStorage.getItem("services")) || [];
-        services[index] = updatedService;
-        localStorage.setItem("services", JSON.stringify(services));
-        alert("Service updated successfully!");
-        loadServices();
-    }
-
-    function deleteService(index) {
-        let services = JSON.parse(localStorage.getItem("services")) || [];
-        services.splice(index, 1);
-        localStorage.setItem("services", JSON.stringify(services));
-        alert("Service deleted successfully!");
-        loadServices();
-    }
-
-    document.addEventListener("DOMContentLoaded", loadServices);
-</script>
 <script src="scripts.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", loadServices);
+    document.getElementById("addServiceButton").addEventListener("click", addService);
+</script>
 </body>
 </html>

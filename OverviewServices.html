@@ -8,35 +8,49 @@
 
     <style>
         body {
-    background-color: #D6C0B3;
-    display: flex;
-    justify-content: center;  
-    align-items: center;     
-    height: 100vh; 
-    margin: 0;          
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;   
-}
+            background-color: #D6C0B3;
+            display: flex;
+            justify-content: center;  
+            align-items: center;     
+            height: 100vh; 
+            margin: 0;          
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;   
+        }
 
-.block {
-    background-color: #7b5e47; 
-    color: white; 
-    padding: 100px;
-    padding-top: 30px;
-    height: 420px;
-    border-radius: 20px; 
-    text-align: center; 
-    border: 3px solid black;
-}
+        .block {
+            background-color: #7b5e47; 
+            color: white; 
+            padding: 100px;
+            padding-top: 30px;
+            height: auto;
+            width: 80%;
+            border-radius: 20px; 
+            text-align: center; 
+            border: 3px solid black;
+        }
 
-h1{
-    padding-bottom: 35px;
-    font-size: 2.5em;
-}
+        h1 {
+            padding-bottom: 35px;
+            font-size: 2.5em;
+        }
 
-.subtitle{
-    color: rgb(255, 204, 0);
-}
+        .subtitle {
+            color: rgb(255, 204, 0);
+            margin-bottom: 15px;
+        }
 
+        .service-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #493628;
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        p {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -45,15 +59,76 @@ h1{
         <h1>Overview of Services</h1>
 
         <h2 class="subtitle">Future Services:</h2>
-        <div id="futureServices"></div>
+        <div id="futureServices">Loading future services...</div>
 
-        <br></br>
-        <br></br>
+        <br>
         <h2 class="subtitle">Past Services:</h2>
-        <div id="pastServices"></div>
+        <div id="pastServices">Loading past services...</div>
     </div>
     <p><a href="ClientDash.html" class="return-button">Return to Dashboard</a></p>
 
-    <script src="scripts.js"></script> 
+    <script>
+        async function fetchClientBookings() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('Please log in to view your services.');
+                window.location.href = 'HomePage.html'; // Redirect to login page
+                return [];
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/bookings?user_id=${currentUser.id}`);
+                if (response.ok) {
+                    return await response.json();
+                } else {
+                    console.error('Failed to fetch bookings.');
+                    return [];
+                }
+            } catch (err) {
+                console.error('Error fetching bookings:', err);
+                return [];
+            }
+        }
+
+        async function displayServices() {
+            const futureServicesDiv = document.getElementById('futureServices');
+            const pastServicesDiv = document.getElementById('pastServices');
+            futureServicesDiv.innerHTML = 'Loading...';
+            pastServicesDiv.innerHTML = 'Loading...';
+
+            const bookings = await fetchClientBookings();
+
+            if (bookings.length === 0) {
+                futureServicesDiv.innerHTML = '<p>No future services booked.</p>';
+                pastServicesDiv.innerHTML = '<p>No past services available.</p>';
+                return;
+            }
+
+            const currentDate = new Date();
+
+            bookings.forEach(booking => {
+                const bookingDate = new Date(booking.booking_date);
+                const serviceItem = document.createElement('div');
+                serviceItem.classList.add('service-item');
+                serviceItem.textContent = `${booking.service_name} on ${booking.booking_date}`;
+
+                if (bookingDate >= currentDate) {
+                    futureServicesDiv.appendChild(serviceItem);
+                } else {
+                    pastServicesDiv.appendChild(serviceItem);
+                }
+            });
+
+            if (!futureServicesDiv.hasChildNodes()) {
+                futureServicesDiv.innerHTML = '<p>No future services booked.</p>';
+            }
+            if (!pastServicesDiv.hasChildNodes()) {
+                pastServicesDiv.innerHTML = '<p>No past services available.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', displayServices);
+    </script>
+
 </body>
 </html>

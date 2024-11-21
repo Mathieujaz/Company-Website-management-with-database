@@ -4,154 +4,177 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Offered Services</title>
-    <link rel="stylesheet" href="styles.css"> 
-    <script src="scripts.js" defer></script> 
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js" defer></script>
 
     <style>
-     body {
-    background-color: #D6C0B3;
-    text-align: center;
-    display: flex;        
-    justify-content: center;  
-    align-items: center;     
-    height: 100vh;
-    margin: 0;               
-    padding: 20px; 
-}
+        body {
+            background-color: #D6C0B3;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
 
-    .dash {
-        padding: 30px 80px;
-        background-color: #493628;
-        width: auto;
-        display: inline-block; 
-        margin: 0 auto;
-        color: white;
-        border-radius: 20px;
-        margin-bottom: 30px;
+        .dash {
+            padding: 30px 80px;
+            background-color: #493628;
+            width: auto;
+            display: inline-block;
+            margin: 0 auto;
+            color: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
         }
 
         .homepageoffered {
-    background-color: #AB886D;
-    color: white;
-    width: 40%;
-    padding: 60px;
-    border-radius: 30px;
-    display: flex;                
-    flex-direction: column;       
-    align-items: center;         
-    justify-content: center;     
-    text-align: center; 
-}
+            background-color: #AB886D;
+            color: white;
+            width: 40%;
+            padding: 60px;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
 
-.serviceblock {
-    margin-top: 20px;
-    background-color: #493628;
-    width: 40%; 
-    padding: 20px; 
-    border-radius: 20px;
-    display: flex;                 
-    flex-direction: column;        
-    align-items: center;           
-    text-align: center;
-}
-.serviceblock h2 {
-    margin: 10px 0;
-}
+        .serviceblock {
+            margin-top: 20px;
+            background-color: #493628;
+            width: 80%;
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
 
-.serviceblock button {
-    margin: 10px 0; 
-}
+        .serviceblock p {
+            margin: 10px 0;
+        }
 
-#selectdate{
-    margin-bottom: 10px;
-}
+        .serviceblock button {
+            margin-top: 15px;
+        }
 
-#schedule-service{
-    margin-top: 25px;
-}
+        p {
+            color: white;
+        }
 
-p{
-    color: white;
-}
+        #availableServices {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
 
-#availableServices {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
+        #booking {
+            background-color: rgb(17, 196, 232);
+            color: white;
+            margin: 5px;
+            padding: 9px 15px;
+            border-radius: 50px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1em;
+            font-weight: 500;
+            border: 2px solid #ffffff;
+        }
 
-#booking {
-        background-color: rgb(17, 196, 232);
-        color: white;
-        margin: 5px;
-        padding: 9px 15px;
-        border-radius: 50px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 1em;
-        font-weight: 500;
-        border: 2px solid #ffffff;
-        margin-top: -10px;
-        margin-top: 30px;
-
-    }
-
-    #booking:hover {
+        #booking:hover {
             background-color: rgb(13, 159, 188);
-    }
-
+        }
     </style>
-</head><body>
+</head>
+
+<body>
     <div class="homepageoffered">
         <h1 class="dash">Offered Services</h1>
 
-        <div id="availableServices">
-            <div class="serviceblock" id="serviceBlock1">
-                <p id="service1Desc">Service 1: Description for Service 1</p>
-                <button onclick="bookService('Service 1')" id="booking">Book Now</button>
-            </div>
-            <div class="serviceblock" id="serviceBlock2">
-                <p id="service2Desc">Service 2: Description for Service 2</p>
-                <button onclick="bookService('Service 2')" id="booking"> Book Now</button>
-            </div>
-        </div>
+        <div id="availableServices">Loading services...</div>
 
         <br><br>
         <p><a href="ClientDash.html" class="return-button">Return to Dashboard</a></p>
     </div>
-</body>
 
-<script>
+    <script>
+        const apiBaseUrl = 'http://localhost:5000/services'; // Replace with your backend API endpoint
 
-function displayAvailableServices() {
+        // Fetch and display available services from the backend
+        async function displayAvailableServices() {
             const availableServices = document.getElementById("availableServices");
-            availableServices.innerHTML = ""; 
+            availableServices.innerHTML = "Loading services...";
 
-           
-            let services = JSON.parse(localStorage.getItem("services")) || [];
-            if (services.length === 0) {
-                availableServices.textContent = "No services available.";
-            } else {
-                services.forEach(service => {
-                    const serviceBlock = document.createElement("div");
-                    serviceBlock.classList.add("serviceblock");
-                    serviceBlock.innerHTML = `
-                        <p>${service}</p>
-                        <button onclick="bookService('${service}')" id="booking">Book Now</button>
-                    `;
-                    availableServices.appendChild(serviceBlock);
-                });
+            try {
+                const response = await fetch(apiBaseUrl);
+                if (response.ok) {
+                    const services = await response.json();
+                    availableServices.innerHTML = ""; // Clear the loading text
+
+                    if (services.length === 0) {
+                        availableServices.innerHTML = "<p>No services available.</p>";
+                    } else {
+                        services.forEach(service => {
+                            const serviceBlock = document.createElement("div");
+                            serviceBlock.classList.add("serviceblock");
+                            serviceBlock.innerHTML = `
+                                <p><strong>${service.name}</strong>: ${service.description}</p>
+                                <button onclick="bookService(${service.id})" id="booking">Book Now</button>
+                            `;
+                            availableServices.appendChild(serviceBlock);
+                        });
+                    }
+                } else {
+                    availableServices.innerHTML = "<p>Failed to load services. Please try again later.</p>";
+                }
+            } catch (error) {
+                console.error("Error fetching services:", error);
+                availableServices.innerHTML = "<p>An error occurred while loading services.</p>";
             }
         }
 
-        
-        document.addEventListener("DOMContentLoaded", displayAvailableServices);
+        // Function to book a service
+        async function bookService(serviceId) {
+            const bookingDate = prompt("Enter a date for booking (YYYY-MM-DD):");
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-        function bookService(serviceName) {
-            alert(`${serviceName} has been booked!`);
-           
+            if (!currentUser) {
+                alert("You must be logged in to book a service.");
+                return;
+            }
+
+            if (bookingDate) {
+                try {
+                    const response = await fetch('http://localhost:5000/bookings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: currentUser.id, // User ID from localStorage
+                            service_id: serviceId,  // Service ID from the button click
+                            booking_date: bookingDate, // Booking date from the prompt
+                        }),
+                    });
+
+                    if (response.ok) {
+                        alert("Service booked successfully!");
+                    } else {
+                        const error = await response.text();
+                        alert("Error booking service: " + error);
+                    }
+                } catch (err) {
+                    console.error("Error booking service:", err);
+                    alert("An error occurred while booking the service.");
+                }
+            }
         }
-</script>
 
-<script src="scripts.js"></script>
+        // Load services on page load
+        document.addEventListener("DOMContentLoaded", displayAvailableServices);
+    </script>
+</body>
 </html>

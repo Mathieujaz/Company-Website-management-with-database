@@ -3,80 +3,131 @@
 <head>
    <meta charset="UTF-8">
    <title>Main Page</title>
-   <link rel = "stylesheet" href="styles.css">
+   <link rel="stylesheet" href="styles.css">
 
    <style>
-    h1{
-      text-align: center;
-    }
+      h1 {
+         text-align: center;
+      }
 
-    footer {
-    background-color: #fec196;
-    width: 100%;
-    padding: 10px 0;
-    text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin-top: auto;
-}
+      footer {
+         background-color: #fec196;
+         width: 100%;
+         padding: 10px 0;
+         text-align: center;
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+         margin-top: auto;
+      }
+
+      .services-section {
+         margin: 20px auto;
+         padding: 20px;
+         background-color: #f7e4d1;
+         border-radius: 15px;
+         width: 80%;
+         text-align: center;
+      }
+
+      .services-section h2 {
+         margin-bottom: 15px;
+         font-size: 1.8em;
+         color: #493628;
+      }
+
+      .service-item {
+         margin: 10px 0;
+         padding: 10px;
+         background-color: #ab886d;
+         color: white;
+         border-radius: 10px;
+         text-align: center;
+      }
    </style>
 </head>
 
 <header class="mainpageheader">
-  <h2 class="logo">
-    <img id="logoImage" src="default_logo.png" alt=" Logo" style="width:100px; height:auto;" />
-</h2>
-   <nav class = "navigation">
-        <a href="#"> Home</a>
-        <a href="#"> Services</a>
-        <a href="#contactNumber"> Contact</a>
-       <a href="HomePage.html" class="loginbutton">Login</a>
+   <h2 class="logo">
+      <img id="logoImage" src="default_logo.png" alt="Logo" style="width:100px; height:auto;" />
+   </h2>
+   <nav class="navigation">
+      <a href="#">Home</a>
+      <a href="#">Services</a>
+      <a href="#contactNumber">Contact</a>
+      <a href="HomePage.html" class="loginbutton">Login</a>
    </nav>
 </header>
 
-
 <body class="mainpagebody">
+   <section>
+      <h1 id="companyname">Company Name</h1>
+   </section>
 
-  <section>
-    <h1 id="companyname">Company Name</h1>
-    
-  </section>
+   <section class="services-section">
+      <h2>Available Services</h2>
+      <div id="servicesList">Loading services...</div>
+   </section>
 
-
-  <footer>
-    <p>Contact Number: <span id="contactNumber">(123) 456-7890</span></p>
-    <p>Business Address: <span id="businessAddress">123 Clean St, Montreal, QC</span></p>
- </footer>
-       
-        
-  </body>
-
-
+   <footer>
+      <p>Contact Number: <span id="contactNumber">(123) 456-7890</span></p>
+      <p>Business Address: <span id="businessAddress">123 Clean St, Montreal, QC</span></p>
+   </footer>
+</body>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const storedBusinessName = localStorage.getItem('businessName');
-    if (storedBusinessName) {
-      document.getElementById('companyname').textContent = storedBusinessName;
-    }
+   document.addEventListener('DOMContentLoaded', function () {
+      // Set company name from localStorage
+      const storedBusinessName = localStorage.getItem('businessName');
+      if (storedBusinessName) {
+         document.getElementById('companyname').textContent = storedBusinessName;
+      }
 
-    const storedContactNumber = localStorage.getItem('contactNumber') || 'Contact Number: ';
-      const storedBusinessAddress = localStorage.getItem('businessAddress') || 'Business Address: ';
+      // Set contact number and address from localStorage
+      const storedContactNumber = localStorage.getItem('contactNumber') || '(123) 456-7890';
+      const storedBusinessAddress = localStorage.getItem('businessAddress') || '123 Clean St, Montreal, QC';
 
       document.getElementById('contactNumber').textContent = storedContactNumber;
       document.getElementById('businessAddress').textContent = storedBusinessAddress;
-  });
 
-    function setLogo() {
-        const savedLogoSrc = localStorage.getItem('logoSrc');
-        if (savedLogoSrc) {
-            const logoImage = document.getElementById('logoImage');
-            logoImage.src = savedLogoSrc; 
-        }
-    }
+      // Set logo from localStorage
+      const savedLogoSrc = localStorage.getItem('logoSrc');
+      if (savedLogoSrc) {
+         const logoImage = document.getElementById('logoImage');
+         logoImage.src = savedLogoSrc;
+      }
 
-    window.onload = setLogo; 
+      // Fetch and display services
+      fetchServices();
+   });
 
+   // Fetch services from backend and display them
+   async function fetchServices() {
+      const servicesList = document.getElementById('servicesList');
+      servicesList.innerHTML = "Loading services...";
+
+      try {
+         const response = await fetch('http://localhost:5000/services');
+         if (response.ok) {
+            const services = await response.json();
+            if (services.length === 0) {
+               servicesList.innerHTML = "No services available.";
+            } else {
+               servicesList.innerHTML = ""; // Clear the loading message
+               services.forEach(service => {
+                  const serviceItem = document.createElement('div');
+                  serviceItem.classList.add('service-item');
+                  serviceItem.textContent = `${service.name}: ${service.description}`;
+                  servicesList.appendChild(serviceItem);
+               });
+            }
+         } else {
+            servicesList.innerHTML = "Failed to load services.";
+         }
+      } catch (error) {
+         console.error('Error fetching services:', error);
+         servicesList.innerHTML = "An error occurred while loading services.";
+      }
+   }
 </script>
 
-<script src="scripts.js"></script> 
+<script src="scripts.js"></script>
 </html>

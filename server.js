@@ -191,3 +191,160 @@ app.delete('/users/:id', (req, res) => {
         res.status(200).send('User account deleted successfully.');
     });
 });
+
+
+app.get('/services', (req, res) => {
+    const query = 'SELECT * FROM services';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching services:', err);
+            return res.status(500).send('Failed to fetch services.');
+        }
+        res.status(200).json(results);
+    });
+});
+
+
+app.post('/services', (req, res) => {
+    const { name, description } = req.body;
+
+    if (!name || !description) {
+        return res.status(400).send('Name and description are required.');
+    }
+
+    const query = 'INSERT INTO services (name, description) VALUES (?, ?)';
+    db.query(query, [name, description], (err, result) => {
+        if (err) {
+            console.error('Error adding service:', err);
+            return res.status(500).send('Failed to add service.');
+        }
+        res.status(201).send('Service added successfully.');
+    });
+});
+
+
+
+app.put('/services/:id', (req, res) => {
+    const { id } = req.params;
+    const { name, description } = req.body;
+
+    const query = 'UPDATE services SET name = ?, description = ? WHERE id = ?';
+    db.query(query, [name, description, id], (err, result) => {
+        if (err) {
+            console.error('Error updating service:', err);
+            return res.status(500).send('Failed to update service.');
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send('Service not found.');
+        }
+
+        res.status(200).send('Service updated successfully.');
+    });
+});
+
+
+app.delete('/services/:id', (req, res) => {
+    const { id } = req.params;
+
+    const query = 'DELETE FROM services WHERE id = ?';
+    db.query(query, [id], (err, result) => {
+        if (err) {
+            console.error('Error deleting service:', err);
+            return res.status(500).send('Failed to delete service.');
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send('Service not found.');
+        }
+
+        res.status(200).send('Service deleted successfully.');
+    });
+});
+
+
+
+// Create a new booking
+app.post('/bookings', (req, res) => {
+    const { user_id, service_id, booking_date } = req.body;
+
+    if (!user_id || !service_id || !booking_date) {
+        return res.status(400).send('user_id, service_id, and booking_date are required.');
+    }
+
+    const query = 'INSERT INTO bookings (user_id, service_id, booking_date) VALUES (?, ?, ?)';
+    db.query(query, [user_id, service_id, booking_date], (err, result) => {
+        if (err) {
+            console.error('Error creating booking:', err);
+            return res.status(500).send('Failed to create booking.');
+        }
+        res.status(201).send('Booking created successfully.');
+    });
+});
+
+// Get all bookings or bookings by user_id
+app.get('/bookings', (req, res) => {
+    const userId = req.query.user_id;
+
+    let query = `
+        SELECT bookings.id, users.username, services.name AS service_name, bookings.booking_date, bookings.status
+        FROM bookings
+        JOIN users ON bookings.user_id = users.id
+        JOIN services ON bookings.service_id = services.id
+    `;
+    const params = [];
+
+    if (userId) {
+        query += ' WHERE bookings.user_id = ?';
+        params.push(userId);
+    }
+
+    query += ' ORDER BY bookings.booking_date DESC';
+
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error('Error fetching bookings:', err);
+            return res.status(500).send('Failed to fetch bookings.');
+        }
+        res.status(200).json(results);
+    });
+});
+
+// Update a booking
+app.put('/bookings/:id', (req, res) => {
+    const { id } = req.params;
+    const { booking_date, status } = req.body;
+
+    const query = 'UPDATE bookings SET booking_date = ?, status = ? WHERE id = ?';
+    db.query(query, [booking_date, status, id], (err, result) => {
+        if (err) {
+            console.error('Error updating booking:', err);
+            return res.status(500).send('Failed to update booking.');
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send('Booking not found.');
+        }
+
+        res.status(200).send('Booking updated successfully.');
+    });
+});
+
+// Delete a booking
+app.delete('/bookings/:id', (req, res) => {
+    const { id } = req.params;
+
+    const query = 'DELETE FROM bookings WHERE id = ?';
+    db.query(query, [id], (err, result) => {
+        if (err) {
+            console.error('Error deleting booking:', err);
+            return res.status(500).send('Failed to delete booking.');
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send('Booking not found.');
+        }
+
+        res.status(200).send('Booking deleted successfully.');
+    });
+});
