@@ -90,18 +90,22 @@ app.post('/login', (req, res) => {
  
 
 
-
+/*
 app.put('/users', (req, res) => {
     const { id, username, name, email, phone, address } = req.body;
+
+    const parts = name.trim().split(' ');
+    const first_name = parts[0];
+    const last_name = parts.slice(1).join(' ') || null;
 
     // Update the user in the database
     const query = `
         UPDATE users 
-        SET username = ?, name = ?, email = ?, phone = ?, address = ? 
+        SET username = ?,first_name = ?, last_name = ?, email = ?, phone = ?, address = ? 
         WHERE id = ?
     `;
 
-    db.query(query, [username, name, email, phone, address, id], (err, result) => {
+    db.query(query, [username, first_name, last_name, email, phone, address, id], (err, result) => {
         if (err) {
             console.error(err);
             return res.status(500).send('Error updating user.');
@@ -112,8 +116,60 @@ app.put('/users', (req, res) => {
         }
 
         // Send the updated user data back
-        const updatedUser = { id, username, name, email, phone, address };
+        const updatedUser = { id, username, first_name, last_name, email, phone, address };
         res.status(200).json(updatedUser);
+    });
+});
+*/
+
+
+
+app.put('/users', (req, res) => {
+    const { id, username, name, email, phone, address } = req.body;
+
+    // Query to fetch current user data
+    const fetchUserQuery = 'SELECT * FROM users WHERE id = ?';
+
+    db.query(fetchUserQuery, [id], (err, results) => {
+        if (err) {
+            console.error('Error fetching user:', err);
+            return res.status(500).send('Error updating user.');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('User not found.');
+        }
+
+        const currentUser = results[0];
+        const parts = name?.trim().split(' ') || [];
+        const first_name = parts[0] || currentUser.first_name;
+        const last_name = parts.slice(1).join(' ') || currentUser.last_name;
+
+        // Update query to match database schema
+        const updateQuery = `
+            UPDATE users 
+            SET username = ?, first_name = ?, last_name = ?, email = ?, phone = ?, address = ? 
+            WHERE id = ?
+        `;
+
+        db.query(
+            updateQuery,
+            [username || currentUser.username, first_name, last_name, email || currentUser.email, phone || currentUser.phone, address || currentUser.address, id],
+            (err, result) => {
+                if (err) {
+                    console.error('Error updating user:', err);
+                    return res.status(500).send('Error updating user.');
+                }
+
+                if (result.affectedRows === 0) {
+                    return res.status(404).send('User not found.');
+                }
+
+                // Send updated user data back
+                const updatedUser = { id, username, first_name, last_name, email, phone, address };
+                res.status(200).json(updatedUser);
+            }
+        );
     });
 });
 
