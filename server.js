@@ -89,41 +89,6 @@ app.post('/login', (req, res) => {
 });
  
 
-
-/*
-app.put('/users', (req, res) => {
-    const { id, username, name, email, phone, address } = req.body;
-
-    const parts = name.trim().split(' ');
-    const first_name = parts[0];
-    const last_name = parts.slice(1).join(' ') || null;
-
-    // Update the user in the database
-    const query = `
-        UPDATE users 
-        SET username = ?,first_name = ?, last_name = ?, email = ?, phone = ?, address = ? 
-        WHERE id = ?
-    `;
-
-    db.query(query, [username, first_name, last_name, email, phone, address, id], (err, result) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Error updating user.');
-        }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).send('User not found.');
-        }
-
-        // Send the updated user data back
-        const updatedUser = { id, username, first_name, last_name, email, phone, address };
-        res.status(200).json(updatedUser);
-    });
-});
-*/
-
-
-
 app.put('/users', (req, res) => {
     const { id, username, name, email, phone, address } = req.body;
 
@@ -193,6 +158,15 @@ app.delete('/users/:id', (req, res) => {
 });
 
 
+
+
+
+
+
+
+
+
+
 app.get('/services', (req, res) => {
     const query = 'SELECT * FROM services';
     db.query(query, (err, results) => {
@@ -206,14 +180,14 @@ app.get('/services', (req, res) => {
 
 
 app.post('/services', (req, res) => {
-    const { name, description } = req.body;
+    const { name, description, price } = req.body;
 
-    if (!name || !description) {
+    if (!name || !description || !price) {
         return res.status(400).send('Name and description are required.');
     }
 
-    const query = 'INSERT INTO services (name, description) VALUES (?, ?)';
-    db.query(query, [name, description], (err, result) => {
+    const query = 'INSERT INTO services (name, description, price) VALUES (?, ?, ?)';
+    db.query(query, [name, description, price], (err, result) => {
         if (err) {
             console.error('Error adding service:', err);
             return res.status(500).send('Failed to add service.');
@@ -226,10 +200,10 @@ app.post('/services', (req, res) => {
 
 app.put('/services/:id', (req, res) => {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { name, description, price } = req.body;
 
     const query = 'UPDATE services SET name = ?, description = ? WHERE id = ?';
-    db.query(query, [name, description, id], (err, result) => {
+    db.query(query, [name, description, price, id], (err, result) => {
         if (err) {
             console.error('Error updating service:', err);
             return res.status(500).send('Failed to update service.');
@@ -266,14 +240,15 @@ app.delete('/services/:id', (req, res) => {
 
 // Create a new booking
 app.post('/bookings', (req, res) => {
-    const { user_id, service_id, booking_date } = req.body;
+    const { user_id, service_id, date, status } = req.body;
 
-    if (!user_id || !service_id || !booking_date) {
-        return res.status(400).send('user_id, service_id, and booking_date are required.');
+    if (!user_id || !service_id || !date) {
+        return res.status(400).send('user_id, service_id, and date are required.');
     }
-
-    const query = 'INSERT INTO bookings (user_id, service_id, booking_date) VALUES (?, ?, ?)';
-    db.query(query, [user_id, service_id, booking_date], (err, result) => {
+    const bookingStatus = status || 'booked';
+    //const status = 'booked';
+    const query = 'INSERT INTO bookings (user_id, service_id, date, status) VALUES (?, ?, ?, ?)';
+    db.query(query, [user_id, service_id, date, bookingStatus], (err, result) => {
         if (err) {
             console.error('Error creating booking:', err);
             return res.status(500).send('Failed to create booking.');
@@ -285,23 +260,16 @@ app.post('/bookings', (req, res) => {
 // Get all bookings or bookings by user_id
 app.get('/bookings', (req, res) => {
     const userId = req.query.user_id;
-
     let query = `
-        SELECT bookings.id, users.username, services.name AS service_name, bookings.booking_date, bookings.status
-        FROM bookings
-        JOIN users ON bookings.user_id = users.id
-        JOIN services ON bookings.service_id = services.id
-    `;
-    const params = [];
+    SELECT bookings.id, users.username, services.name AS service_name, bookings.date, bookings.status
+    FROM bookings
+    JOIN users ON bookings.user_id = users.id
+    JOIN services ON bookings.service_id = services.id
+    WHERE bookings.user_id = ?
+    ORDER BY bookings.date DESC
+`;
 
-    if (userId) {
-        query += ' WHERE bookings.user_id = ?';
-        params.push(userId);
-    }
-
-    query += ' ORDER BY bookings.booking_date DESC';
-
-    db.query(query, params, (err, results) => {
+    db.query(query, [userId], (err, results) => {
         if (err) {
             console.error('Error fetching bookings:', err);
             return res.status(500).send('Failed to fetch bookings.');

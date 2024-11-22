@@ -115,7 +115,12 @@
                services.forEach(service => {
                   const serviceItem = document.createElement('div');
                   serviceItem.classList.add('service-item');
-                  serviceItem.textContent = `${service.name}: ${service.description}`;
+                 // serviceItem.textContent = `${service.name}: ${service.description}`;
+                 serviceItem.innerHTML = `
+                            <h3>${service.name}</h3>
+                            <p>${service.description}</p>
+                            <p>Price: $${service.price}</p>
+                        `;
                   servicesList.appendChild(serviceItem);
                });
             }

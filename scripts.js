@@ -1,32 +1,4 @@
 
-//OLD WAY FOR REGISTERUSER()
-/*let clients = JSON.parse(localStorage.getItem('clients')) || [];
-
-
-function registerUser() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
-    const address = document.getElementById('address').value;
-
-    let newClient = {
-        username: username,ok
-        password: password,
-        name: name,
-        email: email,
-        phone: phone,
-        address: address
-    };
-
-    clients.push(newClient);
-    localStorage.setItem('clients', JSON.stringify(clients));
-
-    window.location.href = './HomePage.html';
-}
-
-*/
 //BACKEND FOR REGISTERUSER():
 async function registerUser() {
 
@@ -88,80 +60,7 @@ async function loginUser() {
         alert('Failed to login. Please try again later.');
     }
 }
-/*
-function submitChanges() {
-    const updatedName = document.getElementById('name').value;
-    const updatedUsername = document.getElementById('username').value;
-    const updatedEmail = document.getElementById('email').value;
-    const updatedPhone = document.getElementById('phone').value;
-    const updatedAddress = document.getElementById('address').value;
 
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const clientIndex = clients.findIndex(client => client.username === currentUser.username);
-
-    if (clientIndex !== -1) {
-        clients[clientIndex] = {
-            ...clients[clientIndex],
-            username: updatedUsername,
-            name: updatedName,
-            email: updatedEmail,
-            phone: updatedPhone,
-            address: updatedAddress
-        };
-
-        localStorage.setItem('clients', JSON.stringify(clients));
-        localStorage.setItem('currentUser', JSON.stringify(clients[clientIndex]));
-
-        alert('Account updated successfully!');
-        window.location.href = './ClientDash.html';
-    }
-}
-
-*/
-/*
-async function submitChanges() {
-    const updatedName = document.getElementById('name').value;
-    const updatedUsername = document.getElementById('username').value;
-    const updatedEmail = document.getElementById('email').value;
-    const updatedPhone = document.getElementById('phone').value;
-    const updatedAddress = document.getElementById('address').value;
-
-    // Get current user ID from localStorage
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    const updatedData = {
-        id: currentUser.id, // Send the user's ID to identify them in the backend
-        username: updatedUsername,
-        name: updatedName,
-        email: updatedEmail,
-        phone: updatedPhone,
-        address: updatedAddress,
-    };
-
-    try {
-        const response = await fetch('http://localhost:5000/users', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedData),
-        });
-
-        if (response.ok) {
-            const updatedUser = await response.json();
-
-            // Update localStorage with the new user data
-            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-            alert('Account updated successfully!');
-            window.location.href = './ClientDash.html';
-        } else {
-            const errorMessage = await response.text();
-            alert('Error updating account: ' + errorMessage);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred while updating your account.');
-    }
-}
-*/
 // Update user information
 async function submitChanges() {
     
@@ -244,77 +143,7 @@ function signOut() {
     window.location.href = 'mainpage.html';
 }
 
-/*
-function deleteAccount() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    if (currentUser) {
-        const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');
-        if (confirmation) {
-            const clientIndex = clients.findIndex(client => client.username === currentUser.username);
-            if (clientIndex !== -1) {
-                clients.splice(clientIndex, 1);
-                localStorage.setItem('clients', JSON.stringify(clients));
-                localStorage.removeItem('currentUser');
-                localStorage.removeItem(`scheduledServices_${currentUser.username}`);
-                alert('Your account has been deleted successfully.');
-                window.location.href = 'mainpage.html';
-            }
-        }
-    }
-}
-*/
-/*
-async function deleteAccount() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    if (currentUser && currentUser.id) {
-        const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');
-        if (confirmation) {
-            try {
-                const response = await fetch(`http://localhost:5000/users/${currentUser.id}`, {
-                    method: 'DELETE',
-                });
-
-                if (response.ok) {
-                    // Clear session data
-                    localStorage.removeItem('currentUser');
-                    localStorage.removeItem(`scheduledServices_${currentUser.username}`);
-                    alert('Your account has been deleted successfully.');
-                    window.location.href = 'mainpage.html'; // Redirect to main page
-                } else {
-                    const error = await response.text();
-                    alert('Error deleting account: ' + error);
-                }
-            } catch (err) {
-                console.error('Error:', err);
-                alert('An error occurred while deleting your account.');
-            }
-        }
-    } else {
-        alert('No user is currently logged in.');
-    }
-}
-*/
-/*
-function bookService(serviceName) {
-    const bookingDate = prompt("Enter a date for booking (YYYY-MM-DD):");
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const userKey = `scheduledServices_${currentUser.username}`;
-
-    if (bookingDate) {
-        let bookedServices = JSON.parse(localStorage.getItem(userKey)) || [];
-        bookedServices.push({ name: serviceName, date: bookingDate });
-
-        localStorage.setItem(userKey, JSON.stringify(bookedServices));
-        alert(`${serviceName} booked on ${bookingDate}`);
-
-        generateBillsFromBookings();
-        displayOverview();
-    }
-}
-*/
-async function bookService(serviceName) {
+async function bookService(serviceId) {
     const bookingDate = prompt("Enter a date for booking (YYYY-MM-DD):");
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
@@ -331,13 +160,14 @@ async function bookService(serviceName) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     user_id: currentUser.id, // The user's ID from the logged-in session
-                    service_name: serviceName, // Name of the service being booked
+                    service_id: serviceId, // Name of the service being booked
                     date: bookingDate, // Date provided by the user
+                    status: "booked" 
                 }),
             });
 
             if (response.ok) {
-                alert(`${serviceName} booked on ${bookingDate}`);
+                alert(`Service booked on ${bookingDate}`);
                 displayOverview(); // Refresh the overview after successful booking
             } else {
                 const error = await response.text();
@@ -351,7 +181,7 @@ async function bookService(serviceName) {
 }
 
 
-
+/*
 function displayBookedServices() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const userKey = `scheduledServices_${currentUser.username}`;
@@ -370,24 +200,53 @@ function displayBookedServices() {
         });
     }
 }
-
-function displayOverview() {
+*/
+async function fetchClientBookings() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const userKey = `scheduledServices_${currentUser.username}`;
-    const bookedServices = JSON.parse(localStorage.getItem(userKey)) || [];
+    if (!currentUser) {
+        alert('Please log in to view your services.');
+        window.location.href = 'HomePage.html'; // Redirect to login page
+        return [];
+    }
 
+    try {
+        const response = await fetch(`http://localhost:5000/bookings?user_id=${currentUser.id}`);
+        if (response.ok) {
+            const bookings = await response.json();
+            console.log('Fetched bookings:', bookings); // Debug log
+            return bookings;
+        } else {
+            console.error('Failed to fetch bookings.');
+            return [];
+        }
+    } catch (err) {
+        console.error('Error fetching bookings:', err);
+        return [];
+    }
+}
+async function displayOverview() {
     const futureServicesDiv = document.getElementById('futureServices');
     const pastServicesDiv = document.getElementById('pastServices');
-    futureServicesDiv.innerHTML = '';
-    pastServicesDiv.innerHTML = '';
+   // futureServicesDiv.innerHTML = 'Loading...';
+  //  pastServicesDiv.innerHTML = 'Loading...';
 
+    const bookings = await fetchClientBookings();
+
+    if (!bookings ||bookings.length === 0) {
+        futureServicesDiv.innerHTML = '<p>No future services booked.</p>';
+        pastServicesDiv.innerHTML = '<p>No past services available.</p>';
+        return;
+    }
     const currentDate = new Date();
-    bookedServices.forEach(service => {
-        const serviceDate = new Date(service.date);
+    bookings.forEach(booking => {
+        const bookingDate = new Date(booking.date);
+       // const serviceName = booking.service_name
+       const formattedDate = bookingDate.toLocaleDateString('en-CA'); 
         const serviceItem = document.createElement('div');
-        serviceItem.textContent = `${service.name} on ${service.date}`;
+        serviceItem.classList.add('service-item');
+        serviceItem.textContent = `${booking.service_name} on ${formattedDate}`;
 
-        if (serviceDate >= currentDate) {
+        if (bookingDate >= currentDate) {
             futureServicesDiv.appendChild(serviceItem);
         } else {
             pastServicesDiv.appendChild(serviceItem);
@@ -493,9 +352,9 @@ function displayBills() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById('availableServices')) displayAvailableServices();
+    //if (document.getElementById('availableServices')) displayAvailableServices();
     if (document.getElementById('bookedServicesList')) displayBookedServices();
-    if (document.getElementById('futureServices')) displayOverview();
+   // if (document.getElementById('futureServices')) displayOverview();
     if (document.getElementById('cancelServicesList')) displayCancelableServices();
     if (document.getElementById('billsList')) displayBills();
 }
@@ -544,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (document.getElementById('availableServices')) displayAvailableServices();
     if (document.getElementById('bookedServicesList')) displayBookedServices();
-    if (document.getElementById('futureServices')) displayOverview();
+  //  if (document.getElementById('futureServices')) displayOverview();
     if (document.getElementById('cancelServicesList')) displayCancelableServices();
 });
 
@@ -577,6 +436,7 @@ async function loadServices() {
         serviceItem.innerHTML = `
             <input type="text" value="${service.name}" id="service_${service.id}">
             <textarea id="desc_${service.id}">${service.description}</textarea>
+            <input type="number" value="${service.price}" id="price_${service.id}" placeholder="Enter price">
             <button onclick="modifyService(${service.id})">Save</button>
             <button onclick="deleteService(${service.id})">Delete</button>
         `;
@@ -585,19 +445,23 @@ async function loadServices() {
 }
 
 async function addService() {
-    const name = document.getElementById("newService").value;
-    const description = document.getElementById("newDescription").value;
+    const name = document.getElementById("newService").value.trim();
+    const description = document.getElementById("newDescription").value.trim();
+    const price = document.getElementById("newPrice").value.trim(); // Fetch price field
 
     try {
         const response = await fetch('http://localhost:5000/services', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, description }),
+            body: JSON.stringify({ name, description, price }),
         });
 
         if (response.ok) {
             alert('Service added successfully.');
             loadServices();
+            document.getElementById('newService').value = '';
+            document.getElementById('newDescription').value = '';
+            document.getElementById('newPrice').value = '';
         } else {
             alert('Failed to add service.');
         }
@@ -605,7 +469,19 @@ async function addService() {
         console.error('Error adding service:', err);
     }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    // Attach the event listener to the Add Service button
+    const addServiceButton = document.getElementById("addServiceButton");
+    if (addServiceButton) {
+        addServiceButton.addEventListener("click", addService);
+    }
 
+    // Load existing services on page load
+    if (document.getElementById("serviceList")) {
+        loadServices();
+    }
+});
+//document.addEventListener('DOMContentLoaded', loadServices);
 // Functions specific to the Offered Services page
 async function displayAvailableServices() {
     const availableServices = document.getElementById("availableServices");
@@ -617,13 +493,14 @@ async function displayAvailableServices() {
         serviceBlock.classList.add("serviceblock");
         serviceBlock.innerHTML = `
             <p>${service.name}: ${service.description}</p>
-            <button onclick="bookService('${service.name}')">Book Now</button>
+            <p>Price: $${service.price}</p>
+            <button onclick="bookService(${service.id})">Book Now</button>
         `;
         availableServices.appendChild(serviceBlock);
     });
 }
 
-
+/*
 const apiBaseUrl = 'http://localhost:5000/services'; // Change if needed
 
 // Fetch services from backend
@@ -690,7 +567,7 @@ async function addService() {
         console.error('Error adding service:', error);
     }
 }
-
+*/
 // Modify an existing service
 async function modifyService(id) {
     const name = document.getElementById(`name_${id}`).value.trim();
@@ -737,39 +614,3 @@ async function deleteService(id) {
     }
 }
 
-
-
-async function bookService(serviceId) {
-    const bookingDate = prompt("Enter a date for booking (YYYY-MM-DD):");
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    if (!currentUser) {
-        alert('You must be logged in to book a service.');
-        return;
-    }
-
-    if (bookingDate) {
-        try {
-            const response = await fetch('http://localhost:5000/bookings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: currentUser.id,
-                    service_id: serviceId,
-                    booking_date: bookingDate,
-                }),
-            });
-
-            if (response.ok) {
-                alert(`Service booked on ${bookingDate}`);
-                // Optionally, refresh or update the UI
-            } else {
-                const error = await response.text();
-                alert('Error booking service: ' + error);
-            }
-        } catch (err) {
-            console.error('Error:', err);
-            alert('Failed to book the service. Please try again.');
-        }
-    }
-}

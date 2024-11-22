@@ -103,75 +103,8 @@
     </div>
 
     <script>
-        const apiBaseUrl = 'http://localhost:5000/services'; // Replace with your backend API endpoint
-
-        // Fetch and display available services from the backend
-        async function displayAvailableServices() {
-            const availableServices = document.getElementById("availableServices");
-            availableServices.innerHTML = "Loading services...";
-
-            try {
-                const response = await fetch(apiBaseUrl);
-                if (response.ok) {
-                    const services = await response.json();
-                    availableServices.innerHTML = ""; // Clear the loading text
-
-                    if (services.length === 0) {
-                        availableServices.innerHTML = "<p>No services available.</p>";
-                    } else {
-                        services.forEach(service => {
-                            const serviceBlock = document.createElement("div");
-                            serviceBlock.classList.add("serviceblock");
-                            serviceBlock.innerHTML = `
-                                <p><strong>${service.name}</strong>: ${service.description}</p>
-                                <button onclick="bookService(${service.id})" id="booking">Book Now</button>
-                            `;
-                            availableServices.appendChild(serviceBlock);
-                        });
-                    }
-                } else {
-                    availableServices.innerHTML = "<p>Failed to load services. Please try again later.</p>";
-                }
-            } catch (error) {
-                console.error("Error fetching services:", error);
-                availableServices.innerHTML = "<p>An error occurred while loading services.</p>";
-            }
-        }
-
-        // Function to book a service
-        async function bookService(serviceId) {
-            const bookingDate = prompt("Enter a date for booking (YYYY-MM-DD):");
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-            if (!currentUser) {
-                alert("You must be logged in to book a service.");
-                return;
-            }
-
-            if (bookingDate) {
-                try {
-                    const response = await fetch('http://localhost:5000/bookings', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            user_id: currentUser.id, // User ID from localStorage
-                            service_id: serviceId,  // Service ID from the button click
-                            booking_date: bookingDate, // Booking date from the prompt
-                        }),
-                    });
-
-                    if (response.ok) {
-                        alert("Service booked successfully!");
-                    } else {
-                        const error = await response.text();
-                        alert("Error booking service: " + error);
-                    }
-                } catch (err) {
-                    console.error("Error booking service:", err);
-                    alert("An error occurred while booking the service.");
-                }
-            }
-        }
+      
+  
 
         // Load services on page load
         document.addEventListener("DOMContentLoaded", displayAvailableServices);

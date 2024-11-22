@@ -59,38 +59,20 @@
         <h1>Overview of Services</h1>
 
         <h2 class="subtitle">Future Services:</h2>
-        <div id="futureServices">Loading future services...</div>
+        <div id="futureServices"></div>
 
         <br>
         <h2 class="subtitle">Past Services:</h2>
-        <div id="pastServices">Loading past services...</div>
+        <div id="pastServices"></div>
     </div>
     <p><a href="ClientDash.html" class="return-button">Return to Dashboard</a></p>
 
-    <script>
-        async function fetchClientBookings() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) {
-                alert('Please log in to view your services.');
-                window.location.href = 'HomePage.html'; // Redirect to login page
-                return [];
-            }
+    
+        
 
-            try {
-                const response = await fetch(`http://localhost:5000/bookings?user_id=${currentUser.id}`);
-                if (response.ok) {
-                    return await response.json();
-                } else {
-                    console.error('Failed to fetch bookings.');
-                    return [];
-                }
-            } catch (err) {
-                console.error('Error fetching bookings:', err);
-                return [];
-            }
-        }
-
-        async function displayServices() {
+        <script src="scripts.js" defer></script>
+        <script>
+       /* async function displayServices() {
             const futureServicesDiv = document.getElementById('futureServices');
             const pastServicesDiv = document.getElementById('pastServices');
             futureServicesDiv.innerHTML = 'Loading...';
@@ -110,7 +92,7 @@
                 const bookingDate = new Date(booking.booking_date);
                 const serviceItem = document.createElement('div');
                 serviceItem.classList.add('service-item');
-                serviceItem.textContent = `${booking.service_name} on ${booking.booking_date}`;
+                serviceItem.textContent = `${booking.service_name} on ${booking.date}`;
 
                 if (bookingDate >= currentDate) {
                     futureServicesDiv.appendChild(serviceItem);
@@ -126,8 +108,10 @@
                 pastServicesDiv.innerHTML = '<p>No past services available.</p>';
             }
         }
-
-        document.addEventListener('DOMContentLoaded', displayServices);
+*/
+        document.addEventListener('DOMContentLoaded', () => {
+            displayOverview();
+        });
     </script>
 
 </body>
