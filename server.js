@@ -332,20 +332,23 @@ app.put('/bookings/:id', (req, res) => {
 
 // Delete a booking
 app.delete('/bookings/:id', (req, res) => {
-    const { id } = req.params;
-//changed id to booking_id
-    const query = 'DELETE FROM bookings WHERE booking_id = ?';
-    db.query(query, [id], (err, result) => {
+    const bookingId = req.params.id;
+    console.log("Booking ID:", bookingId); // Debug
+
+    const query = 'DELETE FROM bookings WHERE id = ?'; // Make sure your column name is correct
+    db.query(query, [bookingId], (err, result) => {
         if (err) {
-            console.error('Error deleting booking:', err);
+            console.error('Error deleting booking:', err); // Log the error details
             return res.status(500).send('Failed to delete booking.');
         }
 
         if (result.affectedRows === 0) {
+            console.log('No rows affected'); // Debug
             return res.status(404).send('Booking not found.');
         }
 
-        res.status(200).send('Booking deleted successfully.');
+        console.log("Delete successful:", result); // Debug
+        res.status(200).send('Booking canceled successfully.');
     });
 });
 

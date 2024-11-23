@@ -633,44 +633,57 @@ async function addService() {
 */
 // Modify an existing service
 async function modifyService(id) {
-    const name = document.getElementById(`name_${id}`).value.trim();
+    const name = document.getElementById(`service_${id}`).value.trim();
     const description = document.getElementById(`desc_${id}`).value.trim();
+    const price = document.getElementById(`price_${id}`).value.trim();
 
-    if (!name || !description) {
-        alert("Please enter both service name and description.");
+    if (!name || !description || !price) {
+        alert("Please fill in all fields before saving.");
         return;
     }
 
+    console.log("Modifying service with:", { id, name, description, price }); // Debug log
+
     try {
-        const response = await fetch(`${apiBaseUrl}/${id}`, {
+        const response = await fetch(`http://localhost:5000/services/${id}`, { // Correct endpoint
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, description }),
+            body: JSON.stringify({ name, description, price }),
         });
 
         if (response.ok) {
             alert('Service updated successfully!');
-            loadServices();
+            loadServices(); // Reload the services after the update
         } else {
-            alert('Failed to update service.');
+            const error = await response.text();
+            alert('Failed to update service: ' + error);
         }
     } catch (error) {
         console.error('Error updating service:', error);
     }
 }
 
+
+
+
 // Delete a service
 async function deleteService(id) {
+    const confirmation = confirm("Are you sure you want to delete this service?");
+    if (!confirmation) return;
+
+    console.log("Deleting service with ID:", id); // Debug log
+
     try {
-        const response = await fetch(`${apiBaseUrl}/${id}`, {
+        const response = await fetch(`http://localhost:5000/services/${id}`, { // Correct endpoint
             method: 'DELETE',
         });
 
         if (response.ok) {
             alert('Service deleted successfully!');
-            loadServices();
+            loadServices(); // Reload the services after deletion
         } else {
-            alert('Failed to delete service.');
+            const error = await response.text();
+            alert('Failed to delete service: ' + error);
         }
     } catch (error) {
         console.error('Error deleting service:', error);

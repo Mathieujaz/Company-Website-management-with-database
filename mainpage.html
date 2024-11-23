@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
    <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Main Page</title>
    <link rel="stylesheet" href="styles.css">
 
@@ -74,6 +75,7 @@
 </body>
 
 <script>
+   // Set page details from localStorage and fetch services
    document.addEventListener('DOMContentLoaded', function () {
       // Set company name from localStorage
       const storedBusinessName = localStorage.getItem('businessName');
@@ -101,38 +103,43 @@
 
    // Fetch services from backend and display them
    async function fetchServices() {
-      const servicesList = document.getElementById('servicesList');
-      servicesList.innerHTML = "Loading services...";
+   console.log("Fetching services..."); // Debug
+   const servicesList = document.getElementById('servicesList');
+   servicesList.innerHTML = "Loading services...";
 
-      try {
-         const response = await fetch('http://localhost:5000/services');
-         if (response.ok) {
-            const services = await response.json();
-            if (services.length === 0) {
-               servicesList.innerHTML = "No services available.";
-            } else {
-               servicesList.innerHTML = ""; // Clear the loading message
-               services.forEach(service => {
-                  const serviceItem = document.createElement('div');
-                  serviceItem.classList.add('service-item');
-                 // serviceItem.textContent = `${service.name}: ${service.description}`;
-                 serviceItem.innerHTML = `
-                            <h3>${service.name}</h3>
-                            <p>${service.description}</p>
-                            <p>Price: $${service.price}</p>
-                        `;
-                  servicesList.appendChild(serviceItem);
-               });
-            }
+   try {
+      const response = await fetch('http://localhost:5000/services');
+      console.log("Response Status:", response.status); // Debug
+      if (response.ok) {
+         const services = await response.json();
+         console.log("Fetched Services:", services); // Debug
+         if (services.length === 0) {
+            servicesList.innerHTML = "No services available.";
          } else {
-            servicesList.innerHTML = "Failed to load services.";
+            servicesList.innerHTML = ''; // Clear the loading message
+            services.forEach(service => {
+               const serviceItem = document.createElement('div');
+               serviceItem.classList.add('service-item');
+               serviceItem.innerHTML = `
+                  <h3>${service.name}</h3>
+                  <p>${service.description}</p>
+                  <p>Price: $${service.price}</p>
+               `;
+               servicesList.appendChild(serviceItem);
+            });
          }
-      } catch (error) {
-         console.error('Error fetching services:', error);
-         servicesList.innerHTML = "An error occurred while loading services.";
+      } else {
+         const errorText = await response.text();
+         console.error("Error Response:", errorText); // Debug
+         servicesList.innerHTML = "Failed to load services.";
       }
+   } catch (err) {
+      console.error("Error fetching services:", err); // Debug
+      servicesList.innerHTML = "An error occurred while loading services.";
    }
+}
+
 </script>
 
-<script src="scripts.js"></script>
+
 </html>
