@@ -49,7 +49,7 @@ async function loginUser() {
             const user = await response.json();
            localStorage.setItem('currentUser', JSON.stringify(user));
            alert('Login successful!');
-            localStorage.setItem('authToken', user.token);
+           // localStorage.setItem('authToken', user.token);
             window.location.href = './ClientDash.html';
         } else {
             const error = await response.text();
@@ -168,7 +168,9 @@ async function bookService(serviceId) {
 
             if (response.ok) {
                 alert(`Service booked on ${bookingDate}`);
-                displayOverview(); // Refresh the overview after successful booking
+                displayOverview(); 
+                //i added this recently
+                fetchAndDisplayBills(); // Refresh the overview after successful booking
             } else {
                 const error = await response.text();
                 alert('Error booking service: ' + error);
@@ -295,7 +297,7 @@ function cancelService(index) {
 
     alert(`${canceledService.name} on ${canceledService.date} has been canceled.`);
     displayCancelableServices();
-    displayBills(); 
+    fetchAndDisplayBills() 
 }
 
 
@@ -359,11 +361,11 @@ function displayBills() {
 */
 async function fetchAndDisplayBills() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser || !currentUser.id) {
-        alert('Please log in to view your bills.');
-        window.location.href = 'HomePage.html'; // Redirect if no user is logged in
-        return;
-    }
+    //if (!currentUser || !currentUser.id) {
+       // alert('Please log in to view your bills.');
+       // window.location.href = 'HomePage.html'; // Redirect if no user is logged in
+      //  return;
+   // }
 
     try {
         // Fetch bills from the server
@@ -392,12 +394,12 @@ function renderBills(bills) {
     }
 
     // Loop through each bill and display it
-    bills.forEach(bill => {
+    bills.forEach((bill )=> {
         const billDiv = document.createElement('div');
         billDiv.classList.add('bill-item');
         billDiv.innerHTML = `
-            <p>Bill ID: ${bill.bill_id}</p>
-            <p>Service ID: ${bill.service_id}</p>
+           
+            
             <p>Amount: $${bill.amount.toFixed(2)}</p>
             <p>Status: ${bill.status}</p>
         `;

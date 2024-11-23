@@ -215,7 +215,7 @@ app.put('/services/:id', (req, res) => {
     });
 });
 
-/*
+
 app.delete('/services/:id', (req, res) => {
     const { id } = req.params;
 
@@ -235,7 +235,7 @@ app.delete('/services/:id', (req, res) => {
     });
 });
 
-*/
+/*
 app.delete('/services/:id', (req, res) => {
     const serviceId = req.params.id;
 
@@ -257,7 +257,7 @@ app.delete('/services/:id', (req, res) => {
 
             // Delete the service
             const deleteServiceQuery = 'DELETE FROM services WHERE id = ?';
-            db.query(deleteServiceQuery, [serviceId], (err) => {
+            db.query(deleteServiceQuery, [id], (err) => {
                 if (err) {
                     console.error('Error deleting service:', err);
                     return res.status(500).send('Failed to delete service.');
@@ -268,7 +268,7 @@ app.delete('/services/:id', (req, res) => {
         });
     });
 });
-
+*/
 /*
 // Create a new booking
 app.post('/bookings', (req, res) => {
@@ -398,6 +398,7 @@ app.post('/bookings', (req, res) => {
         });
     });
 });
+
 app.get('/bills', (req, res) => {
     const { user_id } = req.query;
 
@@ -406,7 +407,8 @@ app.get('/bills', (req, res) => {
     }
 
     const query = `
-        SELECT id AS bill_id, service_id, amount, status
+       
+        SELECT id, service_id, booking_id, amount, status
         FROM bills
         WHERE user_id = ?
         ORDER BY id DESC
@@ -419,3 +421,30 @@ app.get('/bills', (req, res) => {
         res.status(200).json(results);
     });
 });
+/*
+app.get('/bills', (req, res) => {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+        return res.status(400).send('User ID is required.');
+    }
+
+    const query = `
+        SELECT bills.id, bills.amount, bills.status, bookings.date AS booking_date, services.name AS service_name
+        FROM bills
+        JOIN bookings ON bills.booking_id = bookings.id
+        JOIN services ON bills.service_id = services.id
+        WHERE bills.user_id = ?
+        ORDER BY bills.id DESC
+    `;
+
+    db.query(query, [user_id], (err, results) => {
+        if (err) {
+            console.error('Error fetching bills:', err);
+            return res.status(500).send('Failed to fetch bills.');
+        }
+
+        res.status(200).json(results);
+    });
+});
+*/
