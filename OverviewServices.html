@@ -72,43 +72,7 @@
 
         <script src="scripts.js" defer></script>
         <script>
-       /* async function displayServices() {
-            const futureServicesDiv = document.getElementById('futureServices');
-            const pastServicesDiv = document.getElementById('pastServices');
-            futureServicesDiv.innerHTML = 'Loading...';
-            pastServicesDiv.innerHTML = 'Loading...';
-
-            const bookings = await fetchClientBookings();
-
-            if (bookings.length === 0) {
-                futureServicesDiv.innerHTML = '<p>No future services booked.</p>';
-                pastServicesDiv.innerHTML = '<p>No past services available.</p>';
-                return;
-            }
-
-            const currentDate = new Date();
-
-            bookings.forEach(booking => {
-                const bookingDate = new Date(booking.booking_date);
-                const serviceItem = document.createElement('div');
-                serviceItem.classList.add('service-item');
-                serviceItem.textContent = `${booking.service_name} on ${booking.date}`;
-
-                if (bookingDate >= currentDate) {
-                    futureServicesDiv.appendChild(serviceItem);
-                } else {
-                    pastServicesDiv.appendChild(serviceItem);
-                }
-            });
-
-            if (!futureServicesDiv.hasChildNodes()) {
-                futureServicesDiv.innerHTML = '<p>No future services booked.</p>';
-            }
-            if (!pastServicesDiv.hasChildNodes()) {
-                pastServicesDiv.innerHTML = '<p>No past services available.</p>';
-            }
-        }
-*/
+       
         document.addEventListener('DOMContentLoaded', () => {
             displayOverview();
         });

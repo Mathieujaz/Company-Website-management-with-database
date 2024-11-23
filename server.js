@@ -165,8 +165,6 @@ app.delete('/users/:id', (req, res) => {
 
 
 
-
-
 app.get('/services', (req, res) => {
     const query = 'SELECT * FROM services';
     db.query(query, (err, results) => {
@@ -217,7 +215,7 @@ app.put('/services/:id', (req, res) => {
     });
 });
 
-
+/*
 app.delete('/services/:id', (req, res) => {
     const { id } = req.params;
 
@@ -231,13 +229,47 @@ app.delete('/services/:id', (req, res) => {
         if (result.affectedRows === 0) {
             return res.status(404).send('Service not found.');
         }
-
+    
         res.status(200).send('Service deleted successfully.');
+
     });
 });
 
+*/
+app.delete('/services/:id', (req, res) => {
+    const serviceId = req.params.id;
 
+    // Delete related bills
+    const deleteBillsQuery = 'DELETE FROM bills WHERE service_id = ?';
+    db.query(deleteBillsQuery, [serviceId], (err) => {
+        if (err) {
+            console.error('Error deleting bills:', err);
+            return res.status(500).send('Failed to delete bills.');
+        }
 
+        // Delete related bookings
+        const deleteBookingsQuery = 'DELETE FROM bookings WHERE service_id = ?';
+        db.query(deleteBookingsQuery, [serviceId], (err) => {
+            if (err) {
+                console.error('Error deleting bookings:', err);
+                return res.status(500).send('Failed to delete bookings.');
+            }
+
+            // Delete the service
+            const deleteServiceQuery = 'DELETE FROM services WHERE id = ?';
+            db.query(deleteServiceQuery, [serviceId], (err) => {
+                if (err) {
+                    console.error('Error deleting service:', err);
+                    return res.status(500).send('Failed to delete service.');
+                }
+
+                res.status(200).send('Service and related records deleted successfully.');
+            });
+        });
+    });
+});
+
+/*
 // Create a new booking
 app.post('/bookings', (req, res) => {
     const { user_id, service_id, date, status } = req.body;
@@ -256,7 +288,7 @@ app.post('/bookings', (req, res) => {
         res.status(201).send('Booking created successfully.');
     });
 });
-
+*/
 // Get all bookings or bookings by user_id
 app.get('/bookings', (req, res) => {
     const userId = req.query.user_id;
@@ -301,8 +333,8 @@ app.put('/bookings/:id', (req, res) => {
 // Delete a booking
 app.delete('/bookings/:id', (req, res) => {
     const { id } = req.params;
-
-    const query = 'DELETE FROM bookings WHERE id = ?';
+//changed id to booking_id
+    const query = 'DELETE FROM bookings WHERE booking_id = ?';
     db.query(query, [id], (err, result) => {
         if (err) {
             console.error('Error deleting booking:', err);
@@ -314,5 +346,76 @@ app.delete('/bookings/:id', (req, res) => {
         }
 
         res.status(200).send('Booking deleted successfully.');
+    });
+});
+
+
+//FOR BILLS
+app.post('/bookings', (req, res) => {
+    const { user_id, service_id, date, status } = req.body;
+
+    if (!user_id || !service_id || !date) {
+        return res.status(400).send('Missing required fields.');
+    }
+
+    // Validate user_id and service_id manually
+    const validateUserQuery = 'SELECT id FROM users WHERE id = ?';
+    const validateServiceQuery = 'SELECT id, price FROM services WHERE id = ?';
+
+    db.query(validateUserQuery, [user_id], (err, userResult) => {
+        if (err || userResult.length === 0) {
+            return res.status(400).send('Invalid user ID.');
+        }
+
+        db.query(validateServiceQuery, [service_id], (err, serviceResult) => {
+            if (err || serviceResult.length === 0) {
+                return res.status(400).send('Invalid service ID.');
+            }
+
+            const amount = serviceResult[0].price;
+
+            // Insert booking
+            const bookingQuery = 'INSERT INTO bookings (user_id, service_id, date, status) VALUES (?, ?, ?, ?)';
+            db.query(bookingQuery, [user_id, service_id, date, status || 'booked'], (err, bookingResult) => {
+                if (err) {
+                    console.error('Error creating booking:', err);
+                    return res.status(500).send('Failed to create booking.');
+                }
+
+                const booking_id = bookingResult.insertId;
+
+                // Insert bill
+                const billQuery = 'INSERT INTO bills (user_id, service_id, booking_id, amount, status) VALUES (?, ?, ?, ?, ?)';
+                db.query(billQuery, [user_id, service_id, booking_id, amount, 'Unpaid'], (err) => {
+                    if (err) {
+                        console.error('Error creating bill:', err);
+                        return res.status(500).send('Failed to generate bill.');
+                    }
+
+                    res.status(201).send('Booking and bill created successfully.');
+                });
+            });
+        });
+    });
+});
+app.get('/bills', (req, res) => {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+        return res.status(400).send('User ID is required.');
+    }
+
+    const query = `
+        SELECT id AS bill_id, service_id, amount, status
+        FROM bills
+        WHERE user_id = ?
+        ORDER BY id DESC
+    `;
+    db.query(query, [user_id], (err, results) => {
+        if (err) {
+            console.error('Error fetching bills:', err);
+            return res.status(500).send('Failed to fetch bills.');
+        }
+        res.status(200).json(results);
     });
 });

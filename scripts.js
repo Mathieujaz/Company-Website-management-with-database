@@ -299,6 +299,11 @@ function cancelService(index) {
 }
 
 
+
+
+
+//BILLS
+/*
 function generateBillsFromBookings() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const userKey = `scheduledServices_${currentUser.username}`;
@@ -311,10 +316,11 @@ function generateBillsFromBookings() {
     bookedServices.forEach(service => {
         const existingBill = bills.find(bill => bill.service === service.name && bill.date === service.date);
         if (!existingBill) {
+            const randomAmount = `$${Math.floor(Math.random() * 50 + 100)}`;
             bills.push({
                 date: service.date,
                 service: service.name,
-                amount: `$${Math.floor(Math.random() * 50 + 100)}`,
+                amount: randomAmount,
                 status: "Unpaid"
             });
         }
@@ -350,13 +356,68 @@ function displayBills() {
         });
     }
 }
+*/
+async function fetchAndDisplayBills() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || !currentUser.id) {
+        alert('Please log in to view your bills.');
+        window.location.href = 'HomePage.html'; // Redirect if no user is logged in
+        return;
+    }
 
+    try {
+        // Fetch bills from the server
+        const response = await fetch(`http://localhost:5000/bills?user_id=${currentUser.id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch bills.');
+        }
+
+        const bills = await response.json(); // Parse response data
+        renderBills(bills); // Call renderBills to display the fetched data
+    } catch (error) {
+        console.error('Error fetching bills:', error);
+        const billsList = document.getElementById('billsList');
+        billsList.innerHTML = '<p>Unable to load bills. Please try again later.</p>';
+    }
+}
+
+// Render bills in the HTML
+function renderBills(bills) {
+    const billsList = document.getElementById('billsList');
+    billsList.innerHTML = ''; // Clear existing bills
+
+    if (bills.length === 0) {
+        billsList.textContent = "No bills available.";
+        return;
+    }
+
+    // Loop through each bill and display it
+    bills.forEach(bill => {
+        const billDiv = document.createElement('div');
+        billDiv.classList.add('bill-item');
+        billDiv.innerHTML = `
+            <p>Bill ID: ${bill.bill_id}</p>
+            <p>Service ID: ${bill.service_id}</p>
+            <p>Amount: $${bill.amount.toFixed(2)}</p>
+            <p>Status: ${bill.status}</p>
+        `;
+        billsList.appendChild(billDiv);
+    });
+}
+
+// Fetch and display bills when the page loads
+document.addEventListener("DOMContentLoaded", fetchAndDisplayBills);
+
+//document.addEventListener("DOMContentLoaded", () => {
+  ///  console.log('DOMContentLoaded fired');
+  //  fetchAndDisplayBills();
+//});
 document.addEventListener("DOMContentLoaded", () => {
     //if (document.getElementById('availableServices')) displayAvailableServices();
     if (document.getElementById('bookedServicesList')) displayBookedServices();
    // if (document.getElementById('futureServices')) displayOverview();
     if (document.getElementById('cancelServicesList')) displayCancelableServices();
-    if (document.getElementById('billsList')) displayBills();
+    //if (document.getElementById('billsList')) displayBills();
 }
 )
 
