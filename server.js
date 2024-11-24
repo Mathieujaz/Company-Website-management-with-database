@@ -177,30 +177,16 @@ app.get('/services', (req, res) => {
 });
 
 
-app.post('/services', (req, res) => {
-    const { name, description, price } = req.body;
+app.put('/services/:id', (req, res) => {
+    const { id } = req.params; // Fetch service ID from the URL
+    const { name, description, price } = req.body; // Extract updated data from the request body
 
     if (!name || !description || !price) {
-        return res.status(400).send('Name and description are required.');
+        return res.status(400).send('All fields are required.');
     }
 
-    const query = 'INSERT INTO services (name, description, price) VALUES (?, ?, ?)';
-    db.query(query, [name, description, price], (err, result) => {
-        if (err) {
-            console.error('Error adding service:', err);
-            return res.status(500).send('Failed to add service.');
-        }
-        res.status(201).send('Service added successfully.');
-    });
-});
+    const query = 'UPDATE services SET name = ?, description = ?, price = ? WHERE id = ?';
 
-
-
-app.put('/services/:id', (req, res) => {
-    const { id } = req.params;
-    const { name, description, price } = req.body;
-
-    const query = 'UPDATE services SET name = ?, description = ? WHERE id = ?';
     db.query(query, [name, description, price, id], (err, result) => {
         if (err) {
             console.error('Error updating service:', err);
@@ -212,6 +198,31 @@ app.put('/services/:id', (req, res) => {
         }
 
         res.status(200).send('Service updated successfully.');
+    });
+});
+
+
+// Create a new service
+app.post('/services', (req, res) => {
+    const { name, description, price } = req.body; // Extract data from the request body
+
+    // Validate input fields
+    if (!name || !description || !price) {
+        return res.status(400).send('All fields are required.');
+    }
+
+    const query = `
+        INSERT INTO services (name, description, price)
+        VALUES (?, ?, ?)
+    `;
+
+    db.query(query, [name, description, price], (err, result) => {
+        if (err) {
+            console.error('Error adding service:', err);
+            return res.status(500).send('Failed to add service.');
+        }
+
+        res.status(201).send('Service added successfully.');
     });
 });
 
@@ -291,32 +302,45 @@ app.post('/bookings', (req, res) => {
 */
 // Get all bookings or bookings by user_id
 app.get('/bookings', (req, res) => {
-    const userId = req.query.user_id;
-    let query = `
-    SELECT bookings.id, users.username, services.name AS service_name, bookings.date, bookings.status
-    FROM bookings
-    JOIN users ON bookings.user_id = users.id
-    JOIN services ON bookings.service_id = services.id
-    WHERE bookings.user_id = ?
-    ORDER BY bookings.date DESC
-`;
+    const status = req.query.status;
 
-    db.query(query, [userId], (err, results) => {
+    let query = `
+        SELECT bookings.id, users.username, services.name AS service_name, bookings.date, bookings.status
+        FROM bookings
+        JOIN users ON bookings.user_id = users.id
+        JOIN services ON bookings.service_id = services.id
+    `;
+
+    const params = [];
+    if (status) {
+        query += ' WHERE bookings.status = ?';
+        params.push(status);
+    }
+
+    query += ' ORDER BY bookings.date DESC';
+
+    console.log('Executing query:', query, 'with params:', params); // Add this line for debugging
+
+    db.query(query, params, (err, results) => {
         if (err) {
             console.error('Error fetching bookings:', err);
             return res.status(500).send('Failed to fetch bookings.');
         }
+        console.log('Query results:', results); // Add this line for debugging
         res.status(200).json(results);
     });
 });
 
+
+
+
 // Update a booking
 app.put('/bookings/:id', (req, res) => {
     const { id } = req.params;
-    const { booking_date, status } = req.body;
+    const { status } = req.body; // e.g., 'confirmed'
 
-    const query = 'UPDATE bookings SET booking_date = ?, status = ? WHERE id = ?';
-    db.query(query, [booking_date, status, id], (err, result) => {
+    const query = 'UPDATE bookings SET status = ? WHERE id = ?';
+    db.query(query, [status, id], (err, result) => {
         if (err) {
             console.error('Error updating booking:', err);
             return res.status(500).send('Failed to update booking.');
@@ -330,27 +354,27 @@ app.put('/bookings/:id', (req, res) => {
     });
 });
 
+
+
 // Delete a booking
 app.delete('/bookings/:id', (req, res) => {
-    const bookingId = req.params.id;
-    console.log("Booking ID:", bookingId); // Debug
+    const { id } = req.params;
 
-    const query = 'DELETE FROM bookings WHERE id = ?'; // Make sure your column name is correct
-    db.query(query, [bookingId], (err, result) => {
+    const query = 'DELETE FROM bookings WHERE id = ?';
+    db.query(query, [id], (err, result) => {
         if (err) {
-            console.error('Error deleting booking:', err); // Log the error details
+            console.error('Error deleting booking:', err);
             return res.status(500).send('Failed to delete booking.');
         }
 
         if (result.affectedRows === 0) {
-            console.log('No rows affected'); // Debug
             return res.status(404).send('Booking not found.');
         }
 
-        console.log("Delete successful:", result); // Debug
-        res.status(200).send('Booking canceled successfully.');
+        res.status(200).send('Booking deleted successfully.');
     });
 });
+
 
 
 //FOR BILLS
@@ -410,12 +434,13 @@ app.get('/bills', (req, res) => {
     }
 
     const query = `
-       
-        SELECT id, service_id, booking_id, amount, status
+        SELECT bills.id, services.name AS service_name, bills.amount, bills.status
         FROM bills
-        WHERE user_id = ?
-        ORDER BY id DESC
+        JOIN services ON bills.service_id = services.id
+        WHERE bills.user_id = ?
+        ORDER BY bills.id DESC
     `;
+
     db.query(query, [user_id], (err, results) => {
         if (err) {
             console.error('Error fetching bills:', err);
@@ -424,6 +449,7 @@ app.get('/bills', (req, res) => {
         res.status(200).json(results);
     });
 });
+
 /*
 app.get('/bills', (req, res) => {
     const { user_id } = req.query;
@@ -451,3 +477,30 @@ app.get('/bills', (req, res) => {
     });
 });
 */
+
+
+app.get('/admin/bills', (req, res) => {
+    const query = `
+        SELECT 
+            bills.id, 
+            services.name AS service_name, 
+            bills.amount, 
+            bills.status, 
+            bookings.date AS booking_date, 
+            users.username AS client_name
+        FROM bills
+        JOIN bookings ON bills.booking_id = bookings.id
+        JOIN services ON bills.service_id = services.id
+        JOIN users ON bills.user_id = users.id
+        ORDER BY bills.id DESC
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching admin bills:', err);
+            return res.status(500).send('Failed to fetch admin bills.');
+        }
+
+        res.status(200).json(results);
+    });
+});

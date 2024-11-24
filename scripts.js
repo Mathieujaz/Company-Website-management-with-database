@@ -394,18 +394,18 @@ function renderBills(bills) {
     }
 
     // Loop through each bill and display it
-    bills.forEach((bill )=> {
+    bills.forEach((bill) => {
         const billDiv = document.createElement('div');
         billDiv.classList.add('bill-item');
         billDiv.innerHTML = `
-           
-            
+            <p>Service: ${bill.service_name}</p>
             <p>Amount: $${bill.amount.toFixed(2)}</p>
             <p>Status: ${bill.status}</p>
         `;
         billsList.appendChild(billDiv);
     });
 }
+
 
 // Fetch and display bills when the page loads
 document.addEventListener("DOMContentLoaded", fetchAndDisplayBills);
@@ -633,19 +633,22 @@ async function addService() {
 */
 // Modify an existing service
 async function modifyService(id) {
+    // Fetch values for the service being modified
     const name = document.getElementById(`service_${id}`).value.trim();
     const description = document.getElementById(`desc_${id}`).value.trim();
     const price = document.getElementById(`price_${id}`).value.trim();
 
+    // Validate inputs
     if (!name || !description || !price) {
         alert("Please fill in all fields before saving.");
         return;
     }
 
-    console.log("Modifying service with:", { id, name, description, price }); // Debug log
+    console.log("Modifying service with:", { id, name, description, price }); // Debugging
 
     try {
-        const response = await fetch(`http://localhost:5000/services/${id}`, { // Correct endpoint
+        // Make a PUT request to the backend
+        const response = await fetch(`http://localhost:5000/services/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, description, price }),
@@ -653,15 +656,17 @@ async function modifyService(id) {
 
         if (response.ok) {
             alert('Service updated successfully!');
-            loadServices(); // Reload the services after the update
+            loadServices(); // Reload services to reflect changes
         } else {
             const error = await response.text();
             alert('Failed to update service: ' + error);
         }
     } catch (error) {
         console.error('Error updating service:', error);
+        alert('An error occurred while updating the service.');
     }
 }
+
 
 
 
@@ -689,4 +694,46 @@ async function deleteService(id) {
         console.error('Error deleting service:', error);
     }
 }
+
+async function fetchAndDisplayAdminBills() {
+    const billsList = document.getElementById('billsList');
+    billsList.innerHTML = 'Loading bills...';
+
+    try {
+        const response = await fetch('http://localhost:5000/admin/bills'); // Use admin-specific route
+        if (!response.ok) {
+            throw new Error('Failed to fetch admin bills.');
+        }
+
+        const bills = await response.json();
+
+        // Check if no bills exist
+        if (bills.length === 0) {
+            billsList.textContent = 'No bills available.';
+            return;
+        }
+
+        billsList.innerHTML = ''; // Clear the loading text
+
+        // Iterate over bills and add them to the list
+        bills.forEach(bill => {
+            const billDiv = document.createElement('div');
+            billDiv.classList.add('bill-item');
+            billDiv.innerHTML = `
+                <p>Client: ${bill.client_name}</p>
+                <p>Service: ${bill.service_name}</p>
+                <p>Booking Date: ${bill.booking_date}</p>
+                <p>Amount: $${bill.amount.toFixed(2)}</p>
+                <p>Status: ${bill.status}</p>
+            `;
+            billsList.appendChild(billDiv);
+        });
+    } catch (error) {
+        console.error('Error fetching admin bills:', error);
+        billsList.innerHTML = '<p>Unable to load bills. Please try again later.</p>';
+    }
+}
+
+// Trigger fetchAndDisplayAdminBills when the admin page loads
+document.addEventListener('DOMContentLoaded', fetchAndDisplayAdminBills);
 
