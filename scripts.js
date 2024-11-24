@@ -737,3 +737,68 @@ async function fetchAndDisplayAdminBills() {
 // Trigger fetchAndDisplayAdminBills when the admin page loads
 document.addEventListener('DOMContentLoaded', fetchAndDisplayAdminBills);
 
+
+
+
+// Store fetched services globally for filtering
+let fetchedServices = [];
+
+// Fetch and display services
+async function displayAvailableServices() {
+    const availableServices = document.getElementById("availableServices");
+    availableServices.innerHTML = "Loading services...";
+
+    try {
+        const response = await fetch("http://localhost:5000/services");
+        if (response.ok) {
+            fetchedServices = await response.json(); // Store services for filtering
+            renderServices(fetchedServices);
+        } else {
+            availableServices.innerHTML = "Failed to load services.";
+        }
+    } catch (error) {
+        console.error("Error fetching services:", error);
+        availableServices.innerHTML = "Error loading services. Please try again later.";
+    }
+}
+
+// Render services
+function renderServices(services) {
+    const availableServices = document.getElementById("availableServices");
+    availableServices.innerHTML = ""; // Clear existing services
+
+    if (services.length === 0) {
+        availableServices.innerHTML = "<p>No services available.</p>";
+        return;
+    }
+
+    services.forEach((service) => {
+        const serviceBlock = document.createElement("div");
+        serviceBlock.classList.add("serviceblock");
+        serviceBlock.setAttribute("data-name", service.name.toLowerCase()); // Store lowercase name for searching
+        serviceBlock.innerHTML = `
+            <p><strong>${service.name}</strong>: ${service.description}</p>
+            <p>Price: $${service.price}</p>
+            <button id="booking" onclick="bookService(${service.id})">Book Now</button>
+        `;
+        availableServices.appendChild(serviceBlock);
+    });
+}
+
+// Filter services based on search query
+function filterServices() {
+    const query = document.getElementById("searchBar").value.toLowerCase(); // Get search query in lowercase
+    const serviceBlocks = document.querySelectorAll(".serviceblock"); // Get all service blocks
+
+    serviceBlocks.forEach((block) => {
+        const serviceName = block.getAttribute("data-name"); // Get service name from the attribute
+        if (serviceName.includes(query)) {
+            block.style.display = ""; // Show if it matches the query
+        } else {
+            block.style.display = "none"; // Hide if it doesn't match the query
+        }
+    });
+}
+
+// Load services on page load
+document.addEventListener("DOMContentLoaded", displayAvailableServices);
