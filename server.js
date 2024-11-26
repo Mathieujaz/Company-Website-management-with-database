@@ -301,6 +301,7 @@ app.post('/bookings', (req, res) => {
 });
 */
 // Get all bookings or bookings by user_id
+// Get all bookings or bookings by status
 app.get('/bookings', (req, res) => {
     const status = req.query.status;
 
@@ -319,17 +320,15 @@ app.get('/bookings', (req, res) => {
 
     query += ' ORDER BY bookings.date DESC';
 
-    console.log('Executing query:', query, 'with params:', params); // Add this line for debugging
-
     db.query(query, params, (err, results) => {
         if (err) {
             console.error('Error fetching bookings:', err);
             return res.status(500).send('Failed to fetch bookings.');
         }
-        console.log('Query results:', results); // Add this line for debugging
         res.status(200).json(results);
     });
 });
+
 
 
 
