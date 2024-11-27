@@ -75,48 +75,48 @@
 </body>
 
 <script>
-   // Set page details from localStorage and fetch services
+   
    document.addEventListener('DOMContentLoaded', function () {
-      // Set company name from localStorage
+     
       const storedBusinessName = localStorage.getItem('businessName');
       if (storedBusinessName) {
          document.getElementById('companyname').textContent = storedBusinessName;
       }
 
-      // Set contact number and address from localStorage
+      
       const storedContactNumber = localStorage.getItem('contactNumber') || '(123) 456-7890';
       const storedBusinessAddress = localStorage.getItem('businessAddress') || '123 Clean St, Montreal, QC';
 
       document.getElementById('contactNumber').textContent = storedContactNumber;
       document.getElementById('businessAddress').textContent = storedBusinessAddress;
 
-      // Set logo from localStorage
+      
       const savedLogoSrc = localStorage.getItem('logoSrc');
       if (savedLogoSrc) {
          const logoImage = document.getElementById('logoImage');
          logoImage.src = savedLogoSrc;
       }
 
-      // Fetch and display services
+      
       fetchServices();
    });
 
-   // Fetch services from backend and display them
+   
    async function fetchServices() {
-   console.log("Fetching services..."); // Debug
+   console.log("Fetching services...");
    const servicesList = document.getElementById('servicesList');
    servicesList.innerHTML = "Loading services...";
 
    try {
       const response = await fetch('http://localhost:5000/services');
-      console.log("Response Status:", response.status); // Debug
+      console.log("Response Status:", response.status); 
       if (response.ok) {
          const services = await response.json();
-         console.log("Fetched Services:", services); // Debug
+         console.log("Fetched Services:", services);
          if (services.length === 0) {
             servicesList.innerHTML = "No services available.";
          } else {
-            servicesList.innerHTML = ''; // Clear the loading message
+            servicesList.innerHTML = '';
             services.forEach(service => {
                const serviceItem = document.createElement('div');
                serviceItem.classList.add('service-item');
@@ -130,11 +130,11 @@
          }
       } else {
          const errorText = await response.text();
-         console.error("Error Response:", errorText); // Debug
+         console.error("Error Response:", errorText); 
          servicesList.innerHTML = "Failed to load services.";
       }
    } catch (err) {
-      console.error("Error fetching services:", err); // Debug
+      console.error("Error fetching services:", err); 
       servicesList.innerHTML = "An error occurred while loading services.";
    }
 }

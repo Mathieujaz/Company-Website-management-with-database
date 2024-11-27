@@ -9,6 +9,7 @@
         body {
             background-color: #D6C0B3;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow-y: auto;
@@ -36,8 +37,13 @@
             align-items: center;
         }
 
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
         .confirm-button {
-            background-color: #AB886D;
+            background-color: #28a745;
             color: white;
             padding: 5px 10px;
             border: none;
@@ -46,12 +52,18 @@
         }
 
         .reject-button {
-            background-color: #ff4d4d;
+            background-color: #dc3545;
             color: white;
             padding: 5px 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+        }
+
+        .confirmed-text {
+            color: #28a745;
+            font-weight: bold;
+            margin-left: 10px;
         }
 
         h1 {
@@ -62,6 +74,14 @@
         .subtitle {
             color: rgb(255, 204, 0);
             margin: 20px 0 10px;
+        }
+
+        .return-button {
+            text-decoration: none;
+            color: white;
+            background-color: #444;
+            padding: 10px 15px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -77,98 +97,110 @@
     </p>
 
     <script>
-        // Fetch pending bookings from the database
-        async function fetchPendingBookings() {
+        async function fetchBills() {
+            const pendingServices = document.getElementById('pendingServices');
             try {
-                const response = await fetch('http://localhost:5000/bookings?status=pending');
-                if (response.ok) {
-                    const data = await response.json();
-                    return data;
+                console.log("Attempting to fetch bills...");
+                const response = await fetch('http://localhost:5000/admin/bills');
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch bills. Status: ${response.status}`);
+                }
+
+                const bills = await response.json();
+                console.log("Fetched bills:", bills);
+
+                if (Array.isArray(bills) && bills.length > 0) {
+                    renderBills(bills);
                 } else {
-                    console.error('Failed to fetch pending bookings.');
-                    return [];
+                    pendingServices.textContent = "No bills available.";
                 }
             } catch (error) {
-                console.error('Error fetching pending bookings:', error);
-                return [];
+                console.error("Error fetching bills:", error);
+                pendingServices.textContent = "Failed to load pending services. Please try again.";
             }
         }
 
-        // Confirm a booking and update its status
-        async function confirmBooking(bookingId) {
+        
+        function renderBills(bills) {
+            const pendingServices = document.getElementById('pendingServices');
+            pendingServices.innerHTML = ''; 
+
+            bills.forEach(bill => {
+                console.log('Rendering bill:', bill); 
+                const serviceItem = document.createElement('div');
+                serviceItem.className = 'service-item';
+
+                serviceItem.innerHTML = `
+                    <div>
+                        <p><strong>Client:</strong> ${bill.client_name || 'N/A'}</p>
+                        <p><strong>Service:</strong> ${bill.service_name || 'N/A'}</p>
+                        <p><strong>Amount:</strong> $${bill.amount ? bill.amount.toFixed(2) : '0.00'}</p>
+                        <p><strong>Status:</strong> <span id="status-${bill.booking_id}">${bill.status || 'Unknown'}</span></p>
+                        <p><strong>Date:</strong> ${bill.booking_date || 'N/A'}</p>
+                    </div>
+                    <div class="buttons" id="buttons-${bill.booking_id}">
+                        <button class="confirm-button" onclick="confirmBill(${bill.booking_id})">Confirm</button>
+                        <button class="reject-button" onclick="deleteBill(${bill.booking_id})">Reject</button>
+                    </div>
+                `;
+
+                pendingServices.appendChild(serviceItem);
+            });
+        }
+
+       
+        async function confirmBill(billId) {
+            console.log(`Confirming bill with ID: ${billId}`); 
             try {
-                const response = await fetch(`http://localhost:5000/bookings/${bookingId}`, {
+                const response = await fetch(`http://localhost:5000/bookings/${billId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'confirmed' }),
+                    body: JSON.stringify({ status: 'Confirmed' }),
                 });
 
                 if (response.ok) {
-                    alert('Booking confirmed successfully.');
-                    loadPendingBookings(); // Reload bookings
+                   
+                    const statusElement = document.getElementById(`status-${billId}`);
+                    statusElement.textContent = "CONFIRMED";
+                    statusElement.className = "confirmed-text";
+
+                    
+                    const buttonsElement = document.getElementById(`buttons-${billId}`);
+                    buttonsElement.innerHTML = ""; 
                 } else {
-                    throw new Error('Failed to confirm booking.');
+                    const error = await response.text();
+                    console.error('Failed to confirm bill:', error);
+                    alert('Failed to confirm the bill: ' + error);
                 }
             } catch (error) {
-                console.error('Error confirming booking:', error);
-                alert('Could not confirm the booking.');
+                console.error('Error confirming bill:', error);
             }
         }
 
-        // Reject a booking and delete it from the database
-        async function rejectBooking(bookingId) {
-            const confirmation = confirm('Are you sure you want to reject this booking?');
-            if (!confirmation) return;
-
+        
+        async function deleteBill(bookingId) {
+            console.log(`Attempting to delete booking with ID: ${bookingId}`);
             try {
                 const response = await fetch(`http://localhost:5000/bookings/${bookingId}`, {
                     method: 'DELETE',
                 });
 
                 if (response.ok) {
-                    alert('Booking rejected successfully.');
-                    loadPendingBookings(); // Reload bookings
+                    alert('Bill deleted successfully!');
+                    fetchBills(); 
                 } else {
-                    throw new Error('Failed to reject booking.');
+                    const error = await response.text();
+                    console.error('Failed to delete bill:', error);
+                    alert('Failed to delete the bill: ' + error);
                 }
             } catch (error) {
-                console.error('Error rejecting booking:', error);
-                alert('Could not reject the booking.');
+                console.error('Error deleting bill:', error);
             }
         }
 
-        // Load and render pending bookings
-        async function loadPendingBookings() {
-            const pendingContainer = document.getElementById('pendingServices');
-            pendingContainer.innerHTML = 'Loading...';
-
-            const bookings = await fetchPendingBookings();
-            if (bookings.length === 0) {
-                pendingContainer.innerHTML = '<p>No pending bookings available.</p>';
-                return;
-            }
-
-            pendingContainer.innerHTML = ''; // Clear existing content
-            bookings.forEach((booking) => {
-                const bookingItem = document.createElement('div');
-                bookingItem.classList.add('service-item');
-                bookingItem.setAttribute('data-id', booking.id);
-
-                bookingItem.innerHTML = `
-                    <p>
-                        <strong>${booking.service_name}</strong> for ${booking.username} on 
-                        ${new Date(booking.date).toLocaleDateString()}
-                    </p>
-                    <button class="confirm-button" onclick="confirmBooking(${booking.id})">Accept</button>
-                    <button class="reject-button" onclick="rejectBooking(${booking.id})">Reject</button>
-                `;
-
-                pendingContainer.appendChild(bookingItem);
-            });
-        }
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', loadPendingBookings);
+    
+        document.addEventListener('DOMContentLoaded', fetchBills);
     </script>
 </body>
 </html>

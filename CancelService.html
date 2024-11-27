@@ -68,7 +68,7 @@
     </div>
 
     <script>
-        // Fetch and display booked services
+       
         async function displayCancelableServices() {
             const cancelServicesList = document.getElementById("cancelServicesList");
             const noServicesMessage = document.getElementById("noServicesMessage");
@@ -106,7 +106,7 @@
             }
         }
 
-        // Cancel a service
+        
         async function cancelService(bookingId) {
             const confirmation = confirm("Are you sure you want to cancel this service?");
             if (!confirmation) return;

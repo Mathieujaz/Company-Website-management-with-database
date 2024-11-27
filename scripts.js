@@ -1,5 +1,5 @@
 
-//BACKEND FOR REGISTERUSER():
+
 async function registerUser() {
 
     const name = document.getElementById('name').value.trim();
@@ -12,7 +12,7 @@ async function registerUser() {
     const newClient = { name, username, password, phone, email, address };
 
 try{
-        //send a post request to the backend
+        
         const response = await fetch('http://localhost:5000/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -49,7 +49,7 @@ async function loginUser() {
             const user = await response.json();
            localStorage.setItem('currentUser', JSON.stringify(user));
            alert('Login successful!');
-           // localStorage.setItem('authToken', user.token);
+          
             window.location.href = './ClientDash.html';
         } else {
             const error = await response.text();
@@ -61,7 +61,7 @@ async function loginUser() {
     }
 }
 
-// Update user information
+
 async function submitChanges() {
     
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -72,7 +72,7 @@ async function submitChanges() {
     const address = document.getElementById('address').value.trim();
 
     const updatedData = {
-        id: currentUser.id, // Use the logged-in user's ID
+        id: currentUser.id, 
         username,
         name,
         email,
@@ -89,10 +89,10 @@ async function submitChanges() {
 
         if (response.ok) {
             const updatedUser = await response.json();
-            // Update local storage with the new user data
+            
             localStorage.setItem('currentUser', JSON.stringify(updatedUser));
             alert('Profile updated successfully!');
-           // window.location.reload(); // Reload to reflect changes
+          
            window.location.href = './ClientDash.html';
         } else {
             const error = await response.text();
@@ -104,7 +104,7 @@ async function submitChanges() {
     }
 }
 
-// Delete user account
+
 async function deleteAccount() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) {
@@ -125,8 +125,8 @@ async function deleteAccount() {
 
         if (response.ok) {
             alert('Account deleted successfully.');
-            localStorage.removeItem('currentUser'); // Clear local storage
-            window.location.href = './Register.html'; // Redirect to the registration page
+            localStorage.removeItem('currentUser'); 
+            window.location.href = './Register.html'; 
         } else {
             const error = await response.text();
             alert('Error deleting account: ' + error);
@@ -154,14 +154,14 @@ async function bookService(serviceId) {
 
     if (bookingDate) {
         try {
-            // Make an API call to create a new booking
+           
             const response = await fetch('http://localhost:5000/bookings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    user_id: currentUser.id, // The user's ID from the logged-in session
-                    service_id: serviceId, // Name of the service being booked
-                    date: bookingDate, // Date provided by the user
+                    user_id: currentUser.id, 
+                    service_id: serviceId, 
+                    date: bookingDate, 
                     status: "booked" 
                 }),
             });
@@ -169,8 +169,8 @@ async function bookService(serviceId) {
             if (response.ok) {
                 alert(`Service booked on ${bookingDate}`);
                 displayOverview(); 
-                //i added this recently
-                fetchAndDisplayBills(); // Refresh the overview after successful booking
+                
+                fetchAndDisplayBills(); 
             } else {
                 const error = await response.text();
                 alert('Error booking service: ' + error);
@@ -183,31 +183,11 @@ async function bookService(serviceId) {
 }
 
 
-/*
-function displayBookedServices() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const userKey = `scheduledServices_${currentUser.username}`;
-    const bookedServices = JSON.parse(localStorage.getItem(userKey)) || [];
-
-    const bookedServicesList = document.getElementById('bookedServicesList');
-    bookedServicesList.innerHTML = '';
-
-    if (bookedServices.length === 0) {
-        bookedServicesList.textContent = "No services booked.";
-    } else {
-        bookedServices.forEach(service => {
-            const serviceItem = document.createElement('div');
-            serviceItem.textContent = `${service.name} on ${service.date}`;
-            bookedServicesList.appendChild(serviceItem);
-        });
-    }
-}
-*/
 async function fetchClientBookings() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) {
         alert('Please log in to view your services.');
-        window.location.href = 'HomePage.html'; // Redirect to login page
+        window.location.href = 'HomePage.html'; 
         return [];
     }
 
@@ -215,7 +195,7 @@ async function fetchClientBookings() {
         const response = await fetch(`http://localhost:5000/bookings?user_id=${currentUser.id}`);
         if (response.ok) {
             const bookings = await response.json();
-            console.log('Fetched bookings:', bookings); // Debug log
+            console.log('Fetched bookings:', bookings); 
             return bookings;
         } else {
             console.error('Failed to fetch bookings.');
@@ -229,8 +209,7 @@ async function fetchClientBookings() {
 async function displayOverview() {
     const futureServicesDiv = document.getElementById('futureServices');
     const pastServicesDiv = document.getElementById('pastServices');
-   // futureServicesDiv.innerHTML = 'Loading...';
-  //  pastServicesDiv.innerHTML = 'Loading...';
+
 
     const bookings = await fetchClientBookings();
 
@@ -242,7 +221,7 @@ async function displayOverview() {
     const currentDate = new Date();
     bookings.forEach(booking => {
         const bookingDate = new Date(booking.date);
-       // const serviceName = booking.service_name
+     
        const formattedDate = bookingDate.toLocaleDateString('en-CA'); 
         const serviceItem = document.createElement('div');
         serviceItem.classList.add('service-item');
@@ -302,80 +281,19 @@ function cancelService(index) {
 
 
 
-
-
-//BILLS
-/*
-function generateBillsFromBookings() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const userKey = `scheduledServices_${currentUser.username}`;
-    const bookedServices = JSON.parse(localStorage.getItem(userKey)) || [];
-
-   
-    const billsKey = `bills_${currentUser.username}`;
-    let bills = JSON.parse(localStorage.getItem(billsKey)) || [];
-
-    bookedServices.forEach(service => {
-        const existingBill = bills.find(bill => bill.service === service.name && bill.date === service.date);
-        if (!existingBill) {
-            const randomAmount = `$${Math.floor(Math.random() * 50 + 100)}`;
-            bills.push({
-                date: service.date,
-                service: service.name,
-                amount: randomAmount,
-                status: "Unpaid"
-            });
-        }
-    });
-
-    localStorage.setItem(billsKey, JSON.stringify(bills));
-    displayBills(); 
-}
-
-function displayBills() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const bills = JSON.parse(localStorage.getItem(`bills_${currentUser.username}`)) || [];
-
-    const billsList = document.getElementById('billsList');
-    billsList.innerHTML = '';
-
-    if (bills.length === 0) {
-        billsList.textContent = "No bills available.";
-    } else {
-        bills.forEach(bill => {
-            const billDiv = document.createElement('div');
-
-
-            billDiv.classList.add('bill-item');
-            
-            billDiv.innerHTML = `
-                <p>Date: ${bill.date}</p>
-                <p>Service: ${bill.service}</p>
-                <p>Amount: ${bill.amount}</p>
-                <p>Status: ${bill.status}</p>
-            `;
-            billsList.appendChild(billDiv);
-        });
-    }
-}
-*/
 async function fetchAndDisplayBills() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    //if (!currentUser || !currentUser.id) {
-       // alert('Please log in to view your bills.');
-       // window.location.href = 'HomePage.html'; // Redirect if no user is logged in
-      //  return;
-   // }
+   
 
     try {
-        // Fetch bills from the server
+      
         const response = await fetch(`http://localhost:5000/bills?user_id=${currentUser.id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch bills.');
         }
 
-        const bills = await response.json(); // Parse response data
-        renderBills(bills); // Call renderBills to display the fetched data
+        const bills = await response.json(); 
+        renderBills(bills); 
     } catch (error) {
         console.error('Error fetching bills:', error);
         const billsList = document.getElementById('billsList');
@@ -383,17 +301,17 @@ async function fetchAndDisplayBills() {
     }
 }
 
-// Render bills in the HTML
+
 function renderBills(bills) {
     const billsList = document.getElementById('billsList');
-    billsList.innerHTML = ''; // Clear existing bills
+    billsList.innerHTML = ''; 
 
     if (bills.length === 0) {
         billsList.textContent = "No bills available.";
         return;
     }
 
-    // Loop through each bill and display it
+    
     bills.forEach((bill) => {
         const billDiv = document.createElement('div');
         billDiv.classList.add('bill-item');
@@ -407,19 +325,16 @@ function renderBills(bills) {
 }
 
 
-// Fetch and display bills when the page loads
+
 document.addEventListener("DOMContentLoaded", fetchAndDisplayBills);
 
-//document.addEventListener("DOMContentLoaded", () => {
-  ///  console.log('DOMContentLoaded fired');
-  //  fetchAndDisplayBills();
-//});
+
 document.addEventListener("DOMContentLoaded", () => {
-    //if (document.getElementById('availableServices')) displayAvailableServices();
+   
     if (document.getElementById('bookedServicesList')) displayBookedServices();
-   // if (document.getElementById('futureServices')) displayOverview();
+   
     if (document.getElementById('cancelServicesList')) displayCancelableServices();
-    //if (document.getElementById('billsList')) displayBills();
+    
 }
 )
 
@@ -466,12 +381,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (document.getElementById('availableServices')) displayAvailableServices();
     if (document.getElementById('bookedServicesList')) displayBookedServices();
-  //  if (document.getElementById('futureServices')) displayOverview();
+  
     if (document.getElementById('cancelServicesList')) displayCancelableServices();
 });
 
 
-//stuff for services display and everything related to them
+
 
 async function fetchServices() {
     try {
@@ -488,7 +403,7 @@ async function fetchServices() {
     }
 }
 
-// Functions specific to the Manage Services page
+
 async function loadServices() {
     const serviceList = document.getElementById("serviceList");
     serviceList.innerHTML = "";
@@ -510,7 +425,7 @@ async function loadServices() {
 async function addService() {
     const name = document.getElementById("newService").value.trim();
     const description = document.getElementById("newDescription").value.trim();
-    const price = document.getElementById("newPrice").value.trim(); // Fetch price field
+    const price = document.getElementById("newPrice").value.trim(); 
 
     try {
         const response = await fetch('http://localhost:5000/services', {
@@ -533,19 +448,18 @@ async function addService() {
     }
 }
 document.addEventListener("DOMContentLoaded", () => {
-    // Attach the event listener to the Add Service button
+    
     const addServiceButton = document.getElementById("addServiceButton");
     if (addServiceButton) {
         addServiceButton.addEventListener("click", addService);
     }
 
-    // Load existing services on page load
+    
     if (document.getElementById("serviceList")) {
         loadServices();
     }
 });
-//document.addEventListener('DOMContentLoaded', loadServices);
-// Functions specific to the Offered Services page
+
 async function displayAvailableServices() {
     const availableServices = document.getElementById("availableServices");
     availableServices.innerHTML = "";
@@ -563,91 +477,23 @@ async function displayAvailableServices() {
     });
 }
 
-/*
-const apiBaseUrl = 'http://localhost:5000/services'; // Change if needed
 
-// Fetch services from backend
-async function fetchServices() {
-    try {
-        const response = await fetch(apiBaseUrl);
-        if (response.ok) {
-            return await response.json();
-        } else {
-            console.error('Failed to fetch services');
-            return [];
-        }
-    } catch (error) {
-        console.error('Error fetching services:', error);
-        return [];
-    }
-}
-
-// Load and display services
-async function loadServices() {
-    const serviceList = document.getElementById("serviceList");
-    serviceList.innerHTML = ""; // Clear current list
-
-    const services = await fetchServices();
-
-    services.forEach(service => {
-        const serviceItem = document.createElement("div");
-        serviceItem.innerHTML = `
-            <input type="text" value="${service.name}" id="name_${service.id}">
-            <input type="text" value="${service.description}" id="desc_${service.id}">
-            <button onclick="modifyService(${service.id})">Save</button>
-            <button onclick="deleteService(${service.id})">Delete</button>
-        `;
-        serviceList.appendChild(serviceItem);
-    });
-}
-
-// Add a new service
-async function addService() {
-    const name = document.getElementById("newService").value.trim();
-    const description = document.getElementById("newDescription").value.trim();
-
-    if (!name || !description) {
-        alert("Please enter both service name and description.");
-        return;
-    }
-
-    try {
-        const response = await fetch(apiBaseUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, description }),
-        });
-
-        if (response.ok) {
-            alert('Service added successfully!');
-            loadServices();
-            document.getElementById("newService").value = "";
-            document.getElementById("newDescription").value = "";
-        } else {
-            alert('Failed to add service.');
-        }
-    } catch (error) {
-        console.error('Error adding service:', error);
-    }
-}
-*/
-// Modify an existing service
 async function modifyService(id) {
-    // Fetch values for the service being modified
+    
     const name = document.getElementById(`service_${id}`).value.trim();
     const description = document.getElementById(`desc_${id}`).value.trim();
     const price = document.getElementById(`price_${id}`).value.trim();
 
-    // Validate inputs
+   
     if (!name || !description || !price) {
         alert("Please fill in all fields before saving.");
         return;
     }
 
-    console.log("Modifying service with:", { id, name, description, price }); // Debugging
+    console.log("Modifying service with:", { id, name, description, price }); 
 
     try {
-        // Make a PUT request to the backend
+        
         const response = await fetch(`http://localhost:5000/services/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -656,7 +502,7 @@ async function modifyService(id) {
 
         if (response.ok) {
             alert('Service updated successfully!');
-            loadServices(); // Reload services to reflect changes
+            loadServices(); 
         } else {
             const error = await response.text();
             alert('Failed to update service: ' + error);
@@ -671,21 +517,20 @@ async function modifyService(id) {
 
 
 
-// Delete a service
+
 async function deleteService(id) {
     const confirmation = confirm("Are you sure you want to delete this service?");
     if (!confirmation) return;
 
-    console.log("Deleting service with ID:", id); // Debug log
-
+    console.log("Deleting service with ID:", id);
     try {
-        const response = await fetch(`http://localhost:5000/services/${id}`, { // Correct endpoint
+        const response = await fetch(`http://localhost:5000/services/${id}`, { 
             method: 'DELETE',
         });
 
         if (response.ok) {
             alert('Service deleted successfully!');
-            loadServices(); // Reload the services after deletion
+            loadServices(); 
         } else {
             const error = await response.text();
             alert('Failed to delete service: ' + error);
@@ -700,22 +545,22 @@ async function fetchAndDisplayAdminBills() {
     billsList.innerHTML = 'Loading bills...';
 
     try {
-        const response = await fetch('http://localhost:5000/admin/bills'); // Use admin-specific route
+        const response = await fetch('http://localhost:5000/admin/bills'); 
         if (!response.ok) {
             throw new Error('Failed to fetch admin bills.');
         }
 
         const bills = await response.json();
 
-        // Check if no bills exist
+        
         if (bills.length === 0) {
             billsList.textContent = 'No bills available.';
             return;
         }
 
-        billsList.innerHTML = ''; // Clear the loading text
+        billsList.innerHTML = ''; 
 
-        // Iterate over bills and add them to the list
+        
         bills.forEach(bill => {
             const billDiv = document.createElement('div');
             billDiv.classList.add('bill-item');
@@ -734,16 +579,16 @@ async function fetchAndDisplayAdminBills() {
     }
 }
 
-// Trigger fetchAndDisplayAdminBills when the admin page loads
+
 document.addEventListener('DOMContentLoaded', fetchAndDisplayAdminBills);
 
 
 
 
-// Store fetched services globally for filtering
+
 let fetchedServices = [];
 
-// Fetch and display services
+
 async function displayAvailableServices() {
     const availableServices = document.getElementById("availableServices");
     availableServices.innerHTML = "Loading services...";
@@ -751,7 +596,7 @@ async function displayAvailableServices() {
     try {
         const response = await fetch("http://localhost:5000/services");
         if (response.ok) {
-            fetchedServices = await response.json(); // Store services for filtering
+            fetchedServices = await response.json(); 
             renderServices(fetchedServices);
         } else {
             availableServices.innerHTML = "Failed to load services.";
@@ -762,10 +607,10 @@ async function displayAvailableServices() {
     }
 }
 
-// Render services
+
 function renderServices(services) {
     const availableServices = document.getElementById("availableServices");
-    availableServices.innerHTML = ""; // Clear existing services
+    availableServices.innerHTML = ""; 
 
     if (services.length === 0) {
         availableServices.innerHTML = "<p>No services available.</p>";
@@ -775,7 +620,7 @@ function renderServices(services) {
     services.forEach((service) => {
         const serviceBlock = document.createElement("div");
         serviceBlock.classList.add("serviceblock");
-        serviceBlock.setAttribute("data-name", service.name.toLowerCase()); // Store lowercase name for searching
+        serviceBlock.setAttribute("data-name", service.name.toLowerCase()); 
         serviceBlock.innerHTML = `
             <p><strong>${service.name}</strong>: ${service.description}</p>
             <p>Price: $${service.price}</p>
@@ -785,20 +630,20 @@ function renderServices(services) {
     });
 }
 
-// Filter services based on search query
+
 function filterServices() {
-    const query = document.getElementById("searchBar").value.toLowerCase(); // Get search query in lowercase
-    const serviceBlocks = document.querySelectorAll(".serviceblock"); // Get all service blocks
+    const query = document.getElementById("searchBar").value.toLowerCase(); 
+    const serviceBlocks = document.querySelectorAll(".serviceblock"); 
 
     serviceBlocks.forEach((block) => {
-        const serviceName = block.getAttribute("data-name"); // Get service name from the attribute
+        const serviceName = block.getAttribute("data-name"); 
         if (serviceName.includes(query)) {
-            block.style.display = ""; // Show if it matches the query
+            block.style.display = ""; 
         } else {
-            block.style.display = "none"; // Hide if it doesn't match the query
+            block.style.display = "none"; 
         }
     });
 }
 
-// Load services on page load
+
 document.addEventListener("DOMContentLoaded", displayAvailableServices);
